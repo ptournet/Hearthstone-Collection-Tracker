@@ -46,12 +46,18 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="HearthDb">
-      <HintPath>..\..\HearthstoneDeckTrackerTemp\lib\HearthDb.dll</HintPath>
+      <HintPath>..\..\..\..\AppData\Local\HearthstoneDeckTracker\app-1.1.4\HearthDb.dll</HintPath>
       <Private>False</Private>
     </Reference>
-    <Reference Include="MahApps.Metro">
-      <HintPath>..\..\HearthstoneDeckTrackerTemp\packages\MahApps.Metro.1.1.2.0\lib\net45\MahApps.Metro.dll</HintPath>
-      <Private>False</Private>
+    <Reference Include="HearthMirror">
+      <HintPath>..\..\HearthMirror\HearthMirror\bin\x86\Debug\HearthMirror.dll</HintPath>
+    </Reference>
+    <Reference Include="HearthstoneDeckTracker">
+      <HintPath>..\..\..\..\AppData\Local\HearthstoneDeckTracker\app-1.1.4\HearthstoneDeckTracker.exe</HintPath>
+    </Reference>
+    <Reference Include="MahApps.Metro, Version=1.1.2.0, Culture=neutral, PublicKeyToken=f4fb5a3c4d1e5b4f, processorArchitecture=MSIL">
+      <HintPath>..\packages\MahApps.Metro.1.1.2.0\lib\net45\MahApps.Metro.dll</HintPath>
+      <Private>True</Private>
     </Reference>
     <Reference Include="Newtonsoft.Json">
       <HintPath>..\..\HearthstoneDeckTrackerTemp\packages\Newtonsoft.Json.6.0.8\lib\net45\Newtonsoft.Json.dll</HintPath>
@@ -63,7 +69,7 @@
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Windows.Interactivity, Version=4.5.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\packages\MahApps.Metro.1.1.2.0\lib\net45\System.Windows.Interactivity.dll</HintPath>
-      <Private>False</Private>
+      <Private>True</Private>
     </Reference>
     <Reference Include="System.Xml" />
     <Reference Include="Microsoft.CSharp" />
@@ -97,7 +103,7 @@
     <Compile Include="Internal\DataUpdaters\DataUpdaterV032.cs" />
     <Compile Include="Internal\DataUpdaters\DataUpdaterV04.cs" />
     <Compile Include="Internal\DataUpdaters\DataUpdaterV05.cs" />
-	<Compile Include="Internal\DataUpdaters\DataUpdaterV051.cs" />
+    <Compile Include="Internal\DataUpdaters\DataUpdaterV051.cs" />
     <Compile Include="Internal\DataUpdaters\DataUpdaterV041.cs" />
     <Compile Include="Internal\DataUpdaters\DefaultDataUpdater.cs" />
     <Compile Include="Internal\DataUpdaters\IDataUpdater.cs" />
