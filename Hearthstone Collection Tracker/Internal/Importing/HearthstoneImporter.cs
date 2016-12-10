@@ -125,7 +125,7 @@ namespace Hearthstone_Collection_Tracker.Internal.Importing
             await Task.Delay(delay);
         }
 
-        private async Task<Tuple<int, int>> GetCardsAmount(Card card,
+        private async Task<Tuple<int, int>> GetCardsAmount(Hearthstone_Deck_Tracker.Hearthstone.Card card,
             double cardPosX, double card2PosX, double cardPosY)
         {
             if (!User32.IsHearthstoneInForeground())
