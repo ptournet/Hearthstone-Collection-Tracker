@@ -45,19 +45,21 @@
     </Win32Resource>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="HearthDb">
-      <HintPath>..\..\..\..\AppData\Local\HearthstoneDeckTracker\app-1.1.4\HearthDb.dll</HintPath>
-      <Private>False</Private>
+    <Reference Include="HearthDb, Version=7.0.0.15590, Culture=neutral, processorArchitecture=x86">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>packages\HearthDb.dll</HintPath>
     </Reference>
-    <Reference Include="HearthMirror">
-      <HintPath>..\..\HearthMirror\HearthMirror\bin\x86\Debug\HearthMirror.dll</HintPath>
+    <Reference Include="HearthMirror, Version=7.0.0.15590, Culture=neutral, processorArchitecture=x86">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>packages\HearthMirror.dll</HintPath>
     </Reference>
-    <Reference Include="HearthstoneDeckTracker">
-      <HintPath>..\..\..\..\AppData\Local\HearthstoneDeckTracker\app-1.1.4\HearthstoneDeckTracker.exe</HintPath>
+    <Reference Include="HearthstoneDeckTracker, Version=1.1.4.0, Culture=neutral, processorArchitecture=x86">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>packages\HearthstoneDeckTracker.exe</HintPath>
     </Reference>
     <Reference Include="MahApps.Metro, Version=1.1.2.0, Culture=neutral, PublicKeyToken=f4fb5a3c4d1e5b4f, processorArchitecture=MSIL">
       <HintPath>..\packages\MahApps.Metro.1.1.2.0\lib\net45\MahApps.Metro.dll</HintPath>
-      <Private>True</Private>
+      <Private>False</Private>
     </Reference>
     <Reference Include="Newtonsoft.Json">
       <HintPath>..\..\HearthstoneDeckTrackerTemp\packages\Newtonsoft.Json.6.0.8\lib\net45\Newtonsoft.Json.dll</HintPath>
@@ -180,12 +182,11 @@
   <ItemGroup>
     <Resource Include="Internal\HSCollection.ico" />
   </ItemGroup>
+  <ItemGroup />
   <ItemGroup>
-    <ProjectReference Include="..\..\HearthstoneDeckTrackerTemp\Hearthstone Deck Tracker\Hearthstone Deck Tracker.csproj">
-      <Project>{e63a3f1c-e662-4e62-be43-af27cb9e953d}</Project>
-      <Name>Hearthstone Deck Tracker</Name>
-      <Private>False</Private>
-    </ProjectReference>
+    <Content Include="packages\HearthDb.dll" />
+    <Content Include="packages\HearthMirror.dll" />
+    <Content Include="packages\HearthstoneDeckTracker.exe" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
