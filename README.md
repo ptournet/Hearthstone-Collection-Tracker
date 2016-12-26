@@ -6,7 +6,7 @@ Hearthstone-Collection-Tracker
 
 ## The community now maintains this plugin.
 
-This is a plugin for [Hearthstone Deck Tracker]
+This is a plugin for [Hearthstone Deck Tracker] 
 
 It allows to keep track on cards you have in collection and shows which type of pack will give you the biggest probability of opening missing cards.
 
