@@ -36,4 +36,4 @@ Then enable it in the Settings menu.
 
 
 [Hearthstone Deck Tracker]:https://github.com/Epix37/Hearthstone-Deck-Tracker
-[release]:https://github.com/ko-vasilev/Hearthstone-Collection-Tracker/releases/latest
+[release]:https://github.com/HearthSim/Hearthstone-Collection-Tracker/releases/latest
