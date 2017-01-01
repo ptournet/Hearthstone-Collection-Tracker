@@ -151,11 +151,11 @@ namespace Hearthstone_Collection_Tracker
                         existingSet.Cards = set.Cards;
                     }
                 }
-                await this.ShowMessageAsync("Import succeed", "Your collection is successfully imported from Hearthstone!");
+                this.ShowMessageAsync("Import succeed", "Your collection is successfully imported from Hearthstone!");
             }
             catch (ImportingException ex)
             {
-                await this.ShowMessageAsync("Importing aborted", ex.Message);
+                this.ShowMessageAsync("Importing aborted", ex.Message);
             }
 
             // bring settings window to front
