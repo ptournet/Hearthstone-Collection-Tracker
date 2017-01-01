@@ -80,7 +80,7 @@ namespace Hearthstone_Collection_Tracker
                 Settings.SaveCurrentAccount(Settings.ActiveAccountSetsInfo.ToList());
             }
 
-            string selectedAccountName = (e.AddedItems[0] as AccountSummary)?.AccountName;
+            string selectedAccountName = (e.AddedItems[0] as AccountSummary).AccountName;
             Settings.SetActiveAccount(selectedAccountName);
         }
 
