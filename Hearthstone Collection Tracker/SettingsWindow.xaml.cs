@@ -7,13 +7,14 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
+using MahApps.Metro.Controls;
 
 namespace Hearthstone_Collection_Tracker
 {
     /// <summary>
     /// Interaction logic for SettingsWindow.xaml
     /// </summary>
-    public partial class SettingsWindow
+    public partial class SettingsWindow : MetroWindow
     {
         public Thickness TitleBarMargin => new Thickness(0, TitlebarHeight, 0, 0);
 
