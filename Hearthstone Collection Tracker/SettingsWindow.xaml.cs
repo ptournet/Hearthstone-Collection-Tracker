@@ -16,7 +16,12 @@ namespace Hearthstone_Collection_Tracker
     /// </summary>
     public partial class SettingsWindow : MetroWindow
     {
-        public Thickness TitleBarMargin => new Thickness(0, TitlebarHeight, 0, 0);
+	    public Thickness TitleBarMargin
+	    {
+		    get { return new Thickness(0, TitlebarHeight, 0, 0); }
+		    set { }
+	    }
+
 
 	    public Window PluginWindow { get; set; }
 
