@@ -212,7 +212,9 @@
     <Error Condition="!Exists('..\packages\Fody.1.28.3\build\Fody.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Fody.1.28.3\build\Fody.targets'))" />
   </Target>
   <PropertyGroup>
-    <PostBuildEvent>copy "$(TargetPath)" "%25appdata%25\HearthstoneDeckTracker\Plugins\$(TargetName).dll"</PostBuildEvent>
+    <PostBuildEvent>if $(ConfigurationName) == Debug-HDTPluginsFolder (
+ copy "$(TargetPath)" "%25appdata%25\HearthstoneDeckTracker\Plugins\$(TargetName).dll"
+)</PostBuildEvent>
   </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
