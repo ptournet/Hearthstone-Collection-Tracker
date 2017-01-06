@@ -138,33 +138,18 @@ namespace Hearthstone_Collection_Tracker
             get { return "Collection Tracker"; }
         }
 
-        public string Description
-        {
-            get
-            {
-                return @"Helps user to keep track on packs progess, suggesting the packs that will most probably contain missing cards.
-Suggestions and bug reports can be sent to https://github.com/ko-vasilev/Hearthstone-Deck-Tracker or directly to e-mail oppa.kostya.bko@gmail.com.";
-            }
-        }
+        public string Description => @"Helps user to keep track on packs progess, suggesting the packs that will most probably contain missing cards.
+Report bugs and issues at https://github.com/HearthSim/Hearthstone-Collection-Tracker/issues.";
 
-        public string ButtonText
-        {
-            get { return "Settings"; }
-        }
+	    public string ButtonText => "Settings";
 
-        public string Author
-        {
-            get { return "Vasilev Konstantin"; }
-        }
+	    public string Author => "Vasilev Konstantin & HearthSim Community";
 
-        public static readonly Version PluginVersion = new Version(0, 5, 1);
+	    public static readonly Version PluginVersion = new Version(0, 5, 1);
 
-        public Version Version
-        {
-            get { return PluginVersion; }
-        }
+        public Version Version => PluginVersion;
 
-        protected MenuItem MainMenuItem { get; set; }
+	    protected MenuItem MainMenuItem { get; set; }
 
         protected static MainWindow MainWindow;
 
@@ -191,17 +176,11 @@ Suggestions and bug reports can be sent to https://github.com/ko-vasilev/Hearths
             }
         }
 
-        public MenuItem MenuItem
-        {
-            get { return MainMenuItem; }
-        }
+        public MenuItem MenuItem => MainMenuItem;
 
-        internal static string PluginDataDir
-        {
-            get { return System.IO.Path.Combine(Hearthstone_Deck_Tracker.Config.Instance.DataDir, "CollectionTracker");  }
-        }
+	    internal static string PluginDataDir => System.IO.Path.Combine(Hearthstone_Deck_Tracker.Config.Instance.DataDir, "CollectionTracker");
 
-        public static PluginSettings Settings { get; set; }
+	    public static PluginSettings Settings { get; set; }
 
         #region Auto Update check implementation
 
