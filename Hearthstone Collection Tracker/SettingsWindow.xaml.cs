@@ -2,12 +2,12 @@
 using Hearthstone_Collection_Tracker.Internal;
 using Hearthstone_Collection_Tracker.Internal.Importing;
 using Hearthstone_Deck_Tracker;
+using MahApps.Metro.Controls;
 using MahApps.Metro.Controls.Dialogs;
 using System.Collections.Generic;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
-using MahApps.Metro.Controls;
 
 namespace Hearthstone_Collection_Tracker
 {
@@ -16,25 +16,28 @@ namespace Hearthstone_Collection_Tracker
     /// </summary>
     public partial class SettingsWindow : MetroWindow
     {
-	    public Thickness TitleBarMargin
-	    {
-		    get { return new Thickness(0, TitlebarHeight, 0, 0); }
-		    set { }
-	    }
+        public Thickness TitleBarMargin
+        {
+            get { return new Thickness(0, TitlebarHeight, 0, 0); }
+        }
 
+        public Window PluginWindow { get; set; }
 
-	    public Window PluginWindow { get; set; }
-
-	    private PluginSettings Settings { get; set; }
+        public PluginSettings Settings { get; set; }
 
         public SettingsWindow(PluginSettings settings)
         {
-            Settings = settings;
+            this.Settings = settings;
             InitializeComponent();
 
             UpdateAccountsComboBox();
 
-            DataContext = this;
+            this.DataContext = this;
+            var setsOption = SetCardsManager.CollectableSets.Select(s => new KeyValuePair<string, string>(s, s)).ToList();
+            setsOption.Insert(0, new KeyValuePair<string, string>("All", null));
+            ComboboxImportingSet.ItemsSource = setsOption;
+
+            CheckboxImportPasteClipboard.IsChecked = Config.Instance.ExportPasteClipboard || !Helper.LatinLanguages.Contains(Config.Instance.SelectedLanguage);
         }
 
         private void UpdateAccountsComboBox()
@@ -119,12 +122,29 @@ namespace Hearthstone_Collection_Tracker
 
         private async void ButtonImportFromGame_Click(object sender, RoutedEventArgs e)
         {
+            const string message = "1) open My Collection in Hearthstone\n2) clear card filters (make sure to change cards filter to All Cards)\n3) do not move your mouse or type after clicking \"Import\"";
+
+            var settings = new MetroDialogSettings { AffirmativeButtonText = "Import" };
+            var result =
+                await
+                this.ShowMessageAsync("Import collection from Hearthstone", message, MessageDialogStyle.AffirmativeAndNegative, settings);
+
+            if (result != MessageDialogResult.Affirmative)
+            {
+                return;
+            }
 
             var importObject = new HearthstoneImporter();
+            importObject.ImportStepDelay = int.Parse((ComboboxImportSpeed.SelectedItem as ComboBoxItem).Tag.ToString());
+            importObject.PasteFromClipboard = CheckboxImportPasteClipboard.IsChecked.HasValue ?
+                CheckboxImportPasteClipboard.IsChecked.Value : false;
+            importObject.NonGoldenFirst = CheckboxPrioritizeFullCollection.IsChecked.HasValue ?
+                CheckboxPrioritizeFullCollection.IsChecked.Value : false;
 
-	        try
+            try
             {
-                var collection = await importObject.Import();
+                var selectedSetToImport = ((KeyValuePair<string, string>)ComboboxImportingSet.SelectedItem).Value;
+                var collection = await importObject.Import(selectedSetToImport);
                 // close plugin window
                 if (PluginWindow != null && PluginWindow.IsVisible)
                 {
