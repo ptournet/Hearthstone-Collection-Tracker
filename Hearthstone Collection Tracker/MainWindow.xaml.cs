@@ -6,6 +6,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -31,28 +32,47 @@ namespace Hearthstone_Collection_Tracker
 
         public MainWindow()
         {
-            SetsInfo = HearthstoneCollectionTrackerPlugin.Settings.ActiveAccountSetsInfo.Select(set => new SetDetailInfoViewModel
-            {
-                SetName = set.SetName,
-                SetCards = new TrulyObservableCollection<CardInCollection>(set.Cards.ToList())
-            });
+	        try
+	        {
+				SetsInfo = HearthstoneCollectionTrackerPlugin.Settings.ActiveAccountSetsInfo.Select(set => new SetDetailInfoViewModel
+				{
+					SetName = set.SetName,
+					SetCards = new TrulyObservableCollection<CardInCollection>(set.Cards.ToList())
+				});
 
-            this.MaxHeight = SystemParameters.PrimaryScreenHeight;
-            InitializeComponent();
+				this.MaxHeight = SystemParameters.PrimaryScreenHeight;
+				InitializeComponent();
 
-            Filter = new FilterSettings();
-            Filter.PropertyChanged += (sender, args) =>
-            {
-                HandleFilterChange(sender, args);
-            };
+				Filter = new FilterSettings();
+				Filter.PropertyChanged += (sender, args) =>
+				{
+					HandleFilterChange(sender, args);
+				};
 
-            string activeAccount = HearthstoneCollectionTrackerPlugin.Settings.ActiveAccount;
-            Title = "Collection Tracker";
-            if (!string.IsNullOrEmpty(activeAccount))
-            {
-                Title += " (" + activeAccount + ")";
-            }
-        }
+				string activeAccount = HearthstoneCollectionTrackerPlugin.Settings.ActiveAccount;
+				Title = "Collection Tracker";
+				if(!string.IsNullOrEmpty(activeAccount))
+				{
+					Title += " (" + activeAccount + ")";
+				}
+			}
+			catch(Exception e)
+			{
+				var f = MessageBox.Show("Your Collection config file seems to be corrupted or out of date. \nReset it now?\n sorry for any inconvenience.", "Hearthstone Collection Tracker", MessageBoxButton.YesNo);
+				if(f == MessageBoxResult.Yes)
+				{
+					foreach(
+						var file in
+						Directory.GetFiles(HearthstoneCollectionTrackerPlugin.PluginDataDir, "Collection_*.xml",
+							SearchOption.TopDirectoryOnly))
+					{
+						File.Delete(file);
+
+					}
+					Core.MainWindow.Restart();
+				}
+			}
+		}
 
         private void EditCollection(SetDetailInfoViewModel setInfo)
         {
