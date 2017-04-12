@@ -3,8 +3,8 @@ max_jobs: 1
 configuration: Release
 clone_depth: 50
 before_build:
-- cmd: nuget restore
 - cmd: bootstrap.bat
+- cmd: nuget restore
 build:
   project: Hearthstone Collection Tracker.sln
   verbosity: minimal
