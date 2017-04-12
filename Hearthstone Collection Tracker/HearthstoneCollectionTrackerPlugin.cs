@@ -11,6 +11,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Threading;
 using System.Windows.Controls;
+using HearthMirror.Enums;
 using Hearthstone_Collection_Tracker;
 using Hearthstone_Deck_Tracker.Enums.Hearthstone;
 using Hearthstone_Deck_Tracker.Utility.Logging;
@@ -52,11 +53,11 @@ namespace Hearthstone_Collection_Tracker
 
 	    private void ImportTimerOnTick(object sender, EventArgs eventArgs)
 	    {
-			if (Hearthstone_Deck_Tracker.Core.Game.CurrentMode != Mode.COLLECTIONMANAGER || !Settings.EnableAutoImport)
+			if (Hearthstone_Deck_Tracker.Core.Game.CurrentMode != Mode.COLLECTIONMANAGER || !Settings.EnableAutoImport || HearthMirror.Status.GetStatus().MirrorStatus != MirrorStatus.Ok)
 				return;
 			try
 			{
-				//SettingsWindow.ImportHearthMirror(false);
+				//SettingsWindow.ImportHearthMirror(false); 
 				var importWithHearthmirror = SettingsWindow.ImportWithHearthmirror(Settings);
 				if (importWithHearthmirror.Result == false)
 				{

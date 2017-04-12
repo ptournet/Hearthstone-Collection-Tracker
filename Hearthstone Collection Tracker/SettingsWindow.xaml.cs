@@ -9,6 +9,8 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
+using HearthMirror.Enums;
+using Hearthstone_Deck_Tracker.Utility.Extensions;
 
 namespace Hearthstone_Collection_Tracker
 {
@@ -125,7 +127,12 @@ namespace Hearthstone_Collection_Tracker
 
 	    public async void ImportHearthMirror(bool showBoxes = false)
 	    {
-
+		    if(HearthMirror.Status.GetStatus().MirrorStatus != MirrorStatus.Ok)
+		    {
+			    if(showBoxes)
+					this.ShowMessageAsync("Not Ready", "Make sure HS is open and you are in the Collection.").Forget();
+				return;
+			}
 			await ImportWithHearthmirror(Settings);
 	    }
 	    public static async Task<bool> ImportWithHearthmirror(PluginSettings theSettings)
