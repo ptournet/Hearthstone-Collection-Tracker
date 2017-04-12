@@ -6,7 +6,7 @@ before_build:
 - cmd: nuget restore
 - cmd: bootstrap.bat
 build:
-  project: Hearthstone Collection Tracker.csproj
+  project: Hearthstone Collection Tracker.sln
   verbosity: minimal
 artifacts:
 - path: Hearthstone Collection Tracker\bin\Release\HearthstoneCollectionTracker.dll
