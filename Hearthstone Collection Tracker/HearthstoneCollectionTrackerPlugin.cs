@@ -12,7 +12,6 @@ using System.Threading.Tasks;
 using System.Windows.Threading;
 using System.Windows.Controls;
 using HearthMirror.Enums;
-using Hearthstone_Collection_Tracker;
 using Hearthstone_Deck_Tracker.Enums.Hearthstone;
 using Hearthstone_Deck_Tracker.Utility.Logging;
 
@@ -33,6 +32,7 @@ namespace Hearthstone_Collection_Tracker
                 if (_mainWindow == null)
                 {
                     InitializeMainWindow();
+                    Debug.Assert(_mainWindow != null, "_mainWindow != null");
                     _mainWindow.Show();
                 }
                 else
@@ -67,6 +67,7 @@ namespace Hearthstone_Collection_Tracker
 			catch(Exception e)
 			{
 				Log.WriteLine("Error when auto-importing in Hearthstone Collection Tracker", LogType.Warning);
+                Log.Error(e);
 			}
 
 	    }

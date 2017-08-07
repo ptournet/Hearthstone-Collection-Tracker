@@ -133,27 +133,17 @@ namespace Hearthstone_Collection_Tracker
 					this.ShowMessageAsync("Not Ready", "Make sure HS is open and you are in the Collection.").Forget();
 				return;
 			}
-			await ImportWithHearthmirror(Settings);
+			var result = await ImportWithHearthmirror(Settings);
+		    var resultText = result == true ? "Successfully imported!" : "Unable to import :(";
+		    this.ShowMessageAsync("Import result", resultText).Forget();
 	    }
 	    public static async Task<bool> ImportWithHearthmirror(PluginSettings theSettings)
 	    {
 			var importObject = new HearthstoneImporter();
-			importObject.ImportStepDelay = 60;
-
-
-		    //MessageBox.Show(importObject.ImportStepDelay.ToString());
-			
-
-			//importObject.PasteFromClipboard = CheckboxImportPasteClipboard.IsChecked.HasValue ?
-				//CheckboxImportPasteClipboard.IsChecked.Value : false;
-			//importObject.NonGoldenFirst = CheckboxPrioritizeFullCollection.IsChecked.HasValue ?
-				//CheckboxPrioritizeFullCollection.IsChecked.Value : false;
-
 			try
 			{
 				var selectedSetToImport = new KeyValuePair<string, string>("All", "").Value;
-				var collection = await importObject.Import(selectedSetToImport);
-				// close plugin window
+				var collection = importObject.Import(selectedSetToImport);
 				foreach(var set in collection)
 				{
 					var existingSet = theSettings.ActiveAccountSetsInfo.FirstOrDefault(s => s.SetName == set.SetName);
