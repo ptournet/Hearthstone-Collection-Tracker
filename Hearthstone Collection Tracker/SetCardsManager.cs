@@ -27,13 +27,14 @@ namespace Hearthstone_Collection_Tracker
                     foreach (var set in CollectableSets)
                     {
                         var currentSetCards = cards.Where(c => c.Set.Equals(set, StringComparison.InvariantCultureIgnoreCase));
+                        var cardsInDecks = GetCardsInDecks();
                         var setInfo = setInfos.FirstOrDefault(si => si.SetName.Equals(set, StringComparison.InvariantCultureIgnoreCase));
                         if (setInfo == null)
                         {
                             collection.Add(new BasicSetCollectionInfo()
                             {
                                 SetName = set,
-                                Cards = currentSetCards.Select(c => new CardInCollection(c)).ToList()
+                                Cards = currentSetCards.Select(c => new CardInCollection(c, cardsInDecks.Where(cid => cid.Key == c.Name).Select(p => p.Value).FirstOrDefault())).ToList()
                             });
                         }
                         else
@@ -43,7 +44,7 @@ namespace Hearthstone_Collection_Tracker
                                 var savedCard = setInfo.Cards.FirstOrDefault(c => c.CardId == card.Id);
                                 if (savedCard == null)
                                 {
-                                    setInfo.Cards.Add(new CardInCollection(card));
+                                    setInfo.Cards.Add(new CardInCollection(card, cardsInDecks.Where(cid => cid.Key == card.Name).Select(p => p.Value).FirstOrDefault()));
                                 }
                                 else
                                 {
@@ -66,14 +67,37 @@ namespace Hearthstone_Collection_Tracker
         public static List<BasicSetCollectionInfo> CreateEmptyCollection()
         {
             var cards = Database.GetActualCards();
+            var cardsInDecks = GetCardsInDecks();
             var setCards = CollectableSets.Select(set => new BasicSetCollectionInfo()
             {
                 SetName = set,
                 Cards = cards.Where(c => c.Set == set)
-                        .Select(c => new CardInCollection(c))
+                        .Select(c => new CardInCollection(c, cardsInDecks.Where(cid => cid.Key == c.Name).Select(p => p.Value).FirstOrDefault()))
                         .ToList()
             }).ToList();
             return setCards;
+        }
+
+        public static SortedDictionary<string, int> GetCardsInDecks()
+        {
+            var cardsInDecks = new SortedDictionary<string, int>();
+            var deckList = DeckList.Instance.Decks.Where(d => !d.IsArenaDeck && !d.IsBrawlDeck).ToList();
+            foreach (var deck in deckList)
+            {
+                foreach (var card in deck.Cards)
+                {
+                    if (cardsInDecks.ContainsKey(card.Name))
+                    {
+                        int copiesOfCardInDeck = cardsInDecks[card.Name];
+                        cardsInDecks[card.Name] = Math.Max(card.Count, copiesOfCardInDeck);
+                    }
+                    else
+                    {
+                        cardsInDecks.Add(card.Name, card.Count);
+                    }
+                }
+            }
+            return cardsInDecks;
         }
 
         public static void SaveCollection(List<BasicSetCollectionInfo> collections, string saveFilePath)

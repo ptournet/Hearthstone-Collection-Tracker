@@ -13,12 +13,12 @@ namespace Hearthstone_Collection_Tracker.ViewModels
     {
         public CardInCollection() { }
 
-        public CardInCollection(Card card, int amountNonGolden = 0, int amountGolden = 0)
+        public CardInCollection(Card card, int copiesInDecks, int amountNonGolden = 0, int amountGolden = 0)
         {
             Card = card;
+            CopiesInDecks = copiesInDecks;
             AmountNonGolden = amountNonGolden;
             AmountGolden = amountGolden;
-            DesiredAmount = MaxAmountInCollection;
             CardId = card.Id;
         }
 
@@ -49,6 +49,18 @@ namespace Hearthstone_Collection_Tracker.ViewModels
             }
         }
 
+        private int _copiesInDecks;
+
+        public int CopiesInDecks
+        {
+            get { return _copiesInDecks; }
+            set
+            {
+                _copiesInDecks = value;
+                OnPropertyChanged();
+            }
+        }
+
         public static int GetMaxAmountInCollection(Rarity rarity)
         {
             return rarity == Rarity.LEGENDARY ? 1 : 2;
@@ -64,15 +76,20 @@ namespace Hearthstone_Collection_Tracker.ViewModels
             }
         }
 
-        private int _desiredAmount;
-
         public int DesiredAmount
         {
-            get { return _desiredAmount; }
-            set
+            get
             {
-                _desiredAmount = value;
-                OnPropertyChanged();
+                // TODO: Make this variable a setting
+                bool useDecksForDesired = true;
+                if (useDecksForDesired)
+                {
+                    return CopiesInDecks;
+                }
+                else
+                {
+                    return MaxAmountInCollection;
+                }
             }
         }
 
