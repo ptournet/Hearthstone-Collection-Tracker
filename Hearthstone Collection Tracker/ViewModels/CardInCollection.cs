@@ -1,11 +1,12 @@
-﻿using Hearthstone_Deck_Tracker.Hearthstone;
+﻿using HearthDb.Enums;
+using Hearthstone_Collection_Tracker.Internal;
+using Hearthstone_Deck_Tracker.Hearthstone;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Xml.Serialization;
-using HearthDb.Enums;
 
 namespace Hearthstone_Collection_Tracker.ViewModels
 {
@@ -13,14 +14,14 @@ namespace Hearthstone_Collection_Tracker.ViewModels
     {
         public CardInCollection() { }
 
-        public CardInCollection(Card card, int copiesInDecks, int amountNonGolden = 0, int amountGolden = 0)
+        public CardInCollection(Card card, int amountNonGolden = 0, int amountGolden = 0)
         {
             Card = card;
-            CopiesInDecks = copiesInDecks;
+            CardId = card.Id;
             AmountNonGolden = amountNonGolden;
             AmountGolden = amountGolden;
+            CopiesInDecks = CardsInDecks.Instance.CopiesInDecks(card.Name);
             DesiredAmount = MaxAmountInCollection;
-            CardId = card.Id;
         }
 
         [XmlIgnore]

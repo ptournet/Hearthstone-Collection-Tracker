@@ -101,12 +101,5 @@ namespace Hearthstone_Collection_Tracker.Internal
 
             return totalBrightness / validPixels;
         }
-
-        public static void UpdateCollection()
-        {
-            var activeAccount = HearthstoneCollectionTrackerPlugin.Settings.ActiveAccount;
-            var fileStoragePath = HearthstoneCollectionTrackerPlugin.Settings.Accounts.Where(a => a.AccountName.Equals(activeAccount)).FirstOrDefault().FileStoragePath;
-            HearthstoneCollectionTrackerPlugin.Settings.ActiveAccountSetsInfo = SetCardsManager.LoadSetsInfo(fileStoragePath);
-        }
     }
 }

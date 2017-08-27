@@ -100,6 +100,7 @@
       <DependentUpon>SetSummary.xaml</DependentUpon>
     </Compile>
     <Compile Include="HearthstoneCollectionTrackerPlugin.cs" />
+    <Compile Include="Internal\CardsInDecks.cs" />
     <Compile Include="Internal\DataUpdaters\BaseUpdaterByVersion.cs" />
     <Compile Include="Internal\DataUpdaters\DataUpdaterV02.cs" />
     <Compile Include="Internal\DataUpdaters\DataUpdaterV022.cs" />

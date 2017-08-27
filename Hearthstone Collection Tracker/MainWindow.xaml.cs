@@ -50,7 +50,7 @@ namespace Hearthstone_Collection_Tracker
 				};
 
 				string activeAccount = HearthstoneCollectionTrackerPlugin.Settings.ActiveAccount;
-                Title = "Collection Tracker";
+				Title = "Collection Tracker";
 				if(!string.IsNullOrEmpty(activeAccount))
 				{
 					Title += " (" + activeAccount + ")";

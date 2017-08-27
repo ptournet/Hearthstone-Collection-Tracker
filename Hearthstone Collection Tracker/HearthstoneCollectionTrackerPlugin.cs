@@ -75,7 +75,7 @@ namespace Hearthstone_Collection_Tracker
 
         private void HandleHearthstoneDeckDeleted(IEnumerable<Deck> decks)
         {
-            Helpers.UpdateCollection();
+            CardsInDecks.Instance.UpdateCardsInDecks();
         }
 
         private void HandleHearthstoneDeckUpdated(Deck deck)
@@ -110,7 +110,7 @@ namespace Hearthstone_Collection_Tracker
 
             if (missingCards.Any())
             {
-                Helpers.UpdateCollection();
+                CardsInDecks.Instance.UpdateCardsInDecks();
                 StringBuilder alertSB = new StringBuilder();
                 foreach (var gr in missingCards.GroupBy(c => c.Item1.Set))
                 {
