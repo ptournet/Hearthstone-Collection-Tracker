@@ -50,7 +50,9 @@ namespace Hearthstone_Collection_Tracker
 				};
 
 				string activeAccount = HearthstoneCollectionTrackerPlugin.Settings.ActiveAccount;
-				Title = "Collection Tracker";
+                var fileStoragePath = HearthstoneCollectionTrackerPlugin.Settings.Accounts.Where(a => a.AccountName.Equals(activeAccount)).FirstOrDefault().FileStoragePath;
+                HearthstoneCollectionTrackerPlugin.Settings.ActiveAccountSetsInfo = SetCardsManager.LoadSetsInfo(fileStoragePath);
+                Title = "Collection Tracker";
 				if(!string.IsNullOrEmpty(activeAccount))
 				{
 					Title += " (" + activeAccount + ")";

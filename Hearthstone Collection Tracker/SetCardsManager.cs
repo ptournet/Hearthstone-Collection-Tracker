@@ -23,11 +23,11 @@ namespace Hearthstone_Collection_Tracker
                 if (setInfos != null)
                 {
                     var cards = Database.GetActualCards();
+                    var cardsInDecks = GetCardsInDecks();
                     collection = setInfos;
                     foreach (var set in CollectableSets)
                     {
                         var currentSetCards = cards.Where(c => c.Set.Equals(set, StringComparison.InvariantCultureIgnoreCase));
-                        var cardsInDecks = GetCardsInDecks();
                         var setInfo = setInfos.FirstOrDefault(si => si.SetName.Equals(set, StringComparison.InvariantCultureIgnoreCase));
                         if (setInfo == null)
                         {
@@ -51,6 +51,7 @@ namespace Hearthstone_Collection_Tracker
                                     savedCard.Card = card;
                                     savedCard.AmountGolden = savedCard.AmountGolden.Clamp(0, savedCard.MaxAmountInCollection);
                                     savedCard.AmountNonGolden = savedCard.AmountNonGolden.Clamp(0, savedCard.MaxAmountInCollection);
+                                    savedCard.CopiesInDecks = cardsInDecks.ContainsKey(card.Name) ? cardsInDecks[card.Name] : 0;
                                 }
                             }
                         }
