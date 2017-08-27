@@ -19,6 +19,7 @@ namespace Hearthstone_Collection_Tracker.ViewModels
             CopiesInDecks = copiesInDecks;
             AmountNonGolden = amountNonGolden;
             AmountGolden = amountGolden;
+            DesiredAmount = MaxAmountInCollection;
             CardId = card.Id;
         }
 
@@ -76,6 +77,8 @@ namespace Hearthstone_Collection_Tracker.ViewModels
             }
         }
 
+        private int _desiredAmount;
+
         public int DesiredAmount
         {
             get
@@ -86,8 +89,13 @@ namespace Hearthstone_Collection_Tracker.ViewModels
                 }
                 else
                 {
-                    return MaxAmountInCollection;
+                    return _desiredAmount;
                 }
+            }
+            set
+            {
+                _desiredAmount = value;
+                OnPropertyChanged();
             }
         }
 
