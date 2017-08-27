@@ -80,9 +80,7 @@ namespace Hearthstone_Collection_Tracker.ViewModels
         {
             get
             {
-                // TODO: Make this variable a setting
-                bool useDecksForDesired = true;
-                if (useDecksForDesired)
+                if (HearthstoneCollectionTrackerPlugin.Settings.UseDecksForDesiredCards)
                 {
                     return CopiesInDecks;
                 }

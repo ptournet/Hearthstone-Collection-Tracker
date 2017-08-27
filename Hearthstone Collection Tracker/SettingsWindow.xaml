@@ -8,7 +8,7 @@
         xmlns:system="clr-namespace:System;assembly=mscorlib"
         mc:Ignorable="d"
         Icon="Internal\HSCollection.ico"
-        Title="Settings" Width="350" Height="313.473">
+        Title="Settings" Width="350" Height="325">
     <Window.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
@@ -78,10 +78,15 @@
         <CheckBox x:Name="CheckboxEnableDesiredCardsFeature" IsChecked="{Binding Path=Settings.EnableDesiredCardsFeature, Mode=TwoWay}"
                   Content="Use desired cards"
                   ToolTip="Controls visibility of Desired Cards feature"
+                  HorizontalAlignment="Left" Margin="10,5,0,0" VerticalAlignment="Top" Checked="CheckboxEnableDesiredCardsFeature_Checked" Unchecked="CheckboxEnableDesiredCardsFeature_Unchecked"/>
+        <CheckBox x:Name="CheckBoxUseDecksForDesiredCards" IsChecked="{Binding Path=Settings.UseDecksForDesiredCards, Mode=TwoWay}"
+                  Content="Use decks for determining desired cards"
+                  IsEnabled="False"
+                  ToolTip="Use cards missing from your decks as your Desired Cards instead of all cards not in your collection."
                   HorizontalAlignment="Left" Margin="10,5,0,0" VerticalAlignment="Top"/>
-        <CheckBox x:Name="checkBoxEnableAutoImport" IsChecked="{Binding Path=Settings.EnableAutoImport, Mode=TwoWay}"
-                  Content="Enable Continuous Importing"
-                  ToolTip="Will import every 5 seconds while in the collection. It is not recommended to run this with multiple accounts/regions."
-                  HorizontalAlignment="Left" Margin="10,5,0,0" VerticalAlignment="Top"/>
+        <CheckBox x:Name="checkBoxEnableAutoImport" IsChecked="{Binding Settings.EnableAutoImport, Mode=TwoWay}"
+            Content="Enable Continuous Importing"
+            ToolTip="Will import every 5 seconds while in the collection. It is not recommended to run this with multiple accounts/regions."
+            HorizontalAlignment="Left" Margin="10,5,0,0" VerticalAlignment="Top"/>
     </StackPanel>
 </controls:MetroWindow>

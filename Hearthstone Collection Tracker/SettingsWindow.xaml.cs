@@ -38,6 +38,7 @@ namespace Hearthstone_Collection_Tracker
             this.DataContext = this;
             var setsOption = SetCardsManager.CollectableSets.Select(s => new KeyValuePair<string, string>(s, s)).ToList();
             setsOption.Insert(0, new KeyValuePair<string, string>("All", null));
+            CheckBoxUseDecksForDesiredCards.IsEnabled = CheckboxEnableDesiredCardsFeature.IsChecked.Value;
         }
 
         private void UpdateAccountsComboBox()
@@ -183,6 +184,16 @@ namespace Hearthstone_Collection_Tracker
 
                 UpdateAccountsComboBox();
             }
+        }
+
+        private void CheckboxEnableDesiredCardsFeature_Checked(object sender, RoutedEventArgs e)
+        {
+            CheckBoxUseDecksForDesiredCards.IsEnabled = true;
+        }
+
+        private void CheckboxEnableDesiredCardsFeature_Unchecked(object sender, RoutedEventArgs e)
+        {
+            CheckBoxUseDecksForDesiredCards.IsEnabled = false;
         }
     }
 }
