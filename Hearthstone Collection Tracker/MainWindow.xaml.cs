@@ -55,7 +55,11 @@ namespace Hearthstone_Collection_Tracker
 				{
 					Title += " (" + activeAccount + ")";
 				}
-			}
+
+                // Setup Quick Converter.
+                QuickConverter.EquationTokenizer.AddNamespace(typeof(object));
+                QuickConverter.EquationTokenizer.AddNamespace(typeof(Visibility));
+            }
 			catch(Exception e)
 			{
 				var f = MessageBox.Show("Your Collection config file seems to be corrupted or out of date. \nReset it now?\n sorry for any inconvenience.", "Hearthstone Collection Tracker", MessageBoxButton.YesNo);
