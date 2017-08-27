@@ -4,6 +4,7 @@ using System.Drawing;
 using System.Net;
 using System.Text;
 using System.Threading.Tasks;
+using System.Linq;
 
 namespace Hearthstone_Collection_Tracker.Internal
 {
@@ -99,6 +100,13 @@ namespace Hearthstone_Collection_Tracker.Internal
             }
 
             return totalBrightness / validPixels;
+        }
+
+        public static void UpdateCollection()
+        {
+            var activeAccount = HearthstoneCollectionTrackerPlugin.Settings.ActiveAccount;
+            var fileStoragePath = HearthstoneCollectionTrackerPlugin.Settings.Accounts.Where(a => a.AccountName.Equals(activeAccount)).FirstOrDefault().FileStoragePath;
+            HearthstoneCollectionTrackerPlugin.Settings.ActiveAccountSetsInfo = SetCardsManager.LoadSetsInfo(fileStoragePath);
         }
     }
 }
