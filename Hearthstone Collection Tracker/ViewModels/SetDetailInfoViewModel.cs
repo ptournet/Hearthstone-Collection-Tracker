@@ -248,14 +248,27 @@ new Dictionary<CRarity, int>
                 foreach (var group in _cards.GroupBy(c => c.Card.Rarity))
                 {
                     var currentRarity = group.Key;
-                    int maxCardsAmount = group.Sum(c => c.MaxAmountInCollection);
 
-                    int havingNonGolden = group.Sum(c => c.AmountNonGolden);
-                    double nonGoldenAverageValue = ((double)havingNonGolden / maxCardsAmount)
+                    int maxCardsAmount = 0;
+                    int havingNonGolden = 0;
+                    int havingGolden = 0;
+                    if (HearthstoneCollectionTrackerPlugin.Settings.UseDecksForDesiredCards)
+                    {
+                        maxCardsAmount = group.Sum(c => c.CopiesInDecks);
+                        havingNonGolden = group.Where(c => c.CopiesInDecks > 0).Sum(c => c.AmountNonGolden);
+                        havingGolden = group.Where(c => c.CopiesInDecks > 0).Sum(c => c.AmountGolden);
+                    }
+                    else
+                    {
+                        maxCardsAmount = group.Sum(c => c.MaxAmountInCollection);
+                        havingNonGolden = group.Sum(c => c.AmountNonGolden);
+                        havingGolden = group.Sum(c => c.AmountGolden);
+                    }
+
+                    double nonGoldenAverageValue = (maxCardsAmount > 0 ? ((double)havingNonGolden / maxCardsAmount) : 1)
                         * CardDisenchantValue[currentRarity] * CardProbabilities[currentRarity];
-
-                    int havingGolden = group.Sum(c => c.AmountGolden);
-                    double goldenAverageValue = ((double)havingGolden / maxCardsAmount)
+                    
+                    double goldenAverageValue = (maxCardsAmount > 0 ? ((double)havingGolden / maxCardsAmount) : 1)
                         * GoldenCardDisenchantValue[currentRarity] * GoldenCardProbabilities[currentRarity];
 
                     totalAvgDustValue += nonGoldenAverageValue + goldenAverageValue;
