@@ -79,7 +79,7 @@
                   Content="Use desired cards"
                   ToolTip="Controls visibility of Desired Cards feature"
                   HorizontalAlignment="Left" Margin="10,5,0,0" VerticalAlignment="Top" Checked="CheckboxEnableDesiredCardsFeature_Checked" Unchecked="CheckboxEnableDesiredCardsFeature_Unchecked"/>
-        <CheckBox x:Name="CheckBoxUseDecksForDesiredCards" IsChecked="{Binding Path=Settings.UseDecksForDesiredCards, Mode=TwoWay}"
+        <CheckBox x:Name="CheckboxUseDecksForDesiredCards" IsChecked="{Binding Path=Settings.UseDecksForDesiredCards, Mode=TwoWay}"
                   Content="Use decks for determining desired cards"
                   IsEnabled="False"
                   ToolTip="Use cards missing from your decks as your Desired Cards instead of all cards not in your collection."

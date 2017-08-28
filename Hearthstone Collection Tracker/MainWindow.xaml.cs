@@ -104,6 +104,14 @@ namespace Hearthstone_Collection_Tracker
         private bool CardsFilter(object card)
         {
             CardInCollection c = card as CardInCollection;
+            if (Filter.OnlyDesired)
+            {
+                if ((Filter.GoldenCards && c.AmountGolden >= c.DesiredAmount)
+                    || (!Filter.GoldenCards && c.AmountNonGolden >= c.DesiredAmount))
+                {
+                    return false;
+                }
+            }
             if (Filter.OnlyMissing)
             {
                 if ((Filter.GoldenCards && c.AmountGolden >= c.MaxAmountInCollection)
@@ -294,6 +302,9 @@ namespace Hearthstone_Collection_Tracker
 
         private void FlyoutCollection_OnIsOpenChanged(object sender, RoutedEventArgs e)
         {
+            // Change Show Desired filter settings
+            ShowOnlyDesired.Visibility = HearthstoneCollectionTrackerPlugin.Settings.EnableDesiredCardsFeature ? Visibility.Visible : Visibility.Collapsed;
+
             if (FlyoutCollection.IsOpen)
                 TextBoxCollectionFilter.Focus();
 
