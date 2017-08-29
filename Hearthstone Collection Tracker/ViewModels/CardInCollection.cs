@@ -1,12 +1,12 @@
-﻿using HearthDb.Enums;
+﻿using Hearthstone_Deck_Tracker.Hearthstone;
 using Hearthstone_Collection_Tracker.Internal;
-using Hearthstone_Deck_Tracker.Hearthstone;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Xml.Serialization;
+using HearthDb.Enums;
 
 namespace Hearthstone_Collection_Tracker.ViewModels
 {
