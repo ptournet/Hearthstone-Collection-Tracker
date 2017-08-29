@@ -75,6 +75,21 @@ namespace Hearthstone_Collection_Tracker.ViewModels
             }
         }
 
+        public int ActualDesiredAmount
+        {
+            get
+            {
+                if (SettingUseDecksForDesiredCards != null && (bool)SettingUseDecksForDesiredCards)
+                {
+                    return CopiesInDecks;
+                }
+                else
+                {
+                    return DesiredAmount;
+                }
+            }
+        }
+
         public static int GetMaxAmountInCollection(Rarity rarity)
         {
             return rarity == Rarity.LEGENDARY ? 1 : 2;
@@ -96,29 +111,12 @@ namespace Hearthstone_Collection_Tracker.ViewModels
         {
             get
             {
-                // If we're using decks then the user's custom desired amount won't be used
-                if (HearthstoneCollectionTrackerPlugin.Settings.UseDecksForDesiredCards)
-                {
-                    return CopiesInDecks;
-                }
-                else
-                {
-                    return _desiredAmount;
-                }
+                return _desiredAmount;
             }
             set
             {
-                /*
-                 * Make sure we don't overwrite the user's desired amounts with
-                 * copies in decks.
-                 * If the setting is null, that means we're starting the
-                 * initial load, which will be the user's actual desired values.
-                 */
-                if (SettingUseDecksForDesiredCards == null || !(bool)SettingUseDecksForDesiredCards)
-                {
-                    _desiredAmount = value;
-                    OnPropertyChanged();
-                }
+                _desiredAmount = value;
+                OnPropertyChanged("DesiredAmount");
             }
         }
 

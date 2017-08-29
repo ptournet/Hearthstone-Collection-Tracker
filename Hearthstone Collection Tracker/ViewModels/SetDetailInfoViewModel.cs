@@ -205,17 +205,17 @@ new Dictionary<CRarity, int>
 
             foreach(var card in cards)
             {
-                TotalDesiredAmount += card.DesiredAmount;
+                TotalDesiredAmount += card.ActualDesiredAmount;
                 TotalAmount += card.MaxAmountInCollection;
                 PlayerHas += card.AmountNonGolden;
                 PlayerHasGolden += card.AmountGolden;
-                PlayerHasDesired += Math.Min(card.AmountGolden + card.AmountNonGolden, card.DesiredAmount);
+                PlayerHasDesired += Math.Min(card.AmountGolden + card.AmountNonGolden, card.ActualDesiredAmount);
             }
             MissingDesiredAmount = TotalDesiredAmount - PlayerHasDesired;
 
             OpenGoldenOdds = CalculateOpeningOdds(cards, card => card.MaxAmountInCollection - card.AmountGolden, GoldenCardProbabilities);
             OpenNonGoldenOdds = CalculateOpeningOdds(cards, card => card.MaxAmountInCollection - card.AmountNonGolden, CardProbabilities);
-            OpenDesiredOdds = CalculateOpeningOdds(cards, card => Math.Max(0, card.DesiredAmount - (card.AmountGolden + card.AmountNonGolden)), AllCardProbabilitiesByRarity);
+            OpenDesiredOdds = CalculateOpeningOdds(cards, card => Math.Max(0, card.ActualDesiredAmount - (card.AmountGolden + card.AmountNonGolden)), AllCardProbabilitiesByRarity);
         }
 
         private const int CARDS_IN_PACK = 5;
