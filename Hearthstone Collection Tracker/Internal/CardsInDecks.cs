@@ -2,8 +2,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 /*
  * A Singleton class to manage how many copies of a card there are in all of
@@ -19,22 +17,6 @@ namespace Hearthstone_Collection_Tracker.Internal
         private static object syncRoot = new Object();
 
         private SortedDictionary<string, int> _cards;
-
-        public SortedDictionary<string, int> Cards
-        {
-            get { return _cards; }
-            set { _cards = value; }
-        }
-
-        public int CopiesInDecks(string cardName)
-        {
-            if (Cards.ContainsKey(cardName))
-            {
-                return Cards[cardName];
-            }
-
-            return 0;
-        }
 
         private CardsInDecks()
         {
@@ -58,6 +40,22 @@ namespace Hearthstone_Collection_Tracker.Internal
 
                 return instance;
             }
+        }
+
+        public SortedDictionary<string, int> Cards
+        {
+            get { return _cards; }
+            set { _cards = value; }
+        }
+
+        public int CopiesInDecks(string cardName)
+        {
+            if (Cards.ContainsKey(cardName))
+            {
+                return Cards[cardName];
+            }
+
+            return 0;
         }
 
         public void UpdateCardsInDecks()

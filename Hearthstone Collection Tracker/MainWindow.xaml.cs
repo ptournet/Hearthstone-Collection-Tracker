@@ -28,6 +28,17 @@ namespace Hearthstone_Collection_Tracker
             get { return new Thickness(0, TitlebarHeight, 0, 0); }
         }
 
+        public void Refresh()
+        {
+            SetStats.ItemsSource = null;
+            this.SetsInfo = HearthstoneCollectionTrackerPlugin.Settings.ActiveAccountSetsInfo.Select(set => new SetDetailInfoViewModel
+            {
+                SetName = set.SetName,
+                SetCards = new TrulyObservableCollection<CardInCollection>(set.Cards.ToList())
+            }).ToList();
+            SetStats.ItemsSource = this.SetsInfo;
+        }
+
         public IEnumerable<SetDetailInfoViewModel> SetsInfo { get; set; }
 
         public MainWindow()
@@ -77,17 +88,6 @@ namespace Hearthstone_Collection_Tracker
 				}
 			}
 		}
-
-        public void Refresh()
-        {
-            SetStats.ItemsSource = null;
-            this.SetsInfo = HearthstoneCollectionTrackerPlugin.Settings.ActiveAccountSetsInfo.Select(set => new SetDetailInfoViewModel
-            {
-                SetName = set.SetName,
-                SetCards = new TrulyObservableCollection<CardInCollection>(set.Cards.ToList())
-            }).ToList();
-            SetStats.ItemsSource = this.SetsInfo;
-        }
 
         private void EditCollection(SetDetailInfoViewModel setInfo)
         {

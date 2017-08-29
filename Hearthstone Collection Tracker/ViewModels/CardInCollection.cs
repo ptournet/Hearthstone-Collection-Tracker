@@ -17,11 +17,23 @@ namespace Hearthstone_Collection_Tracker.ViewModels
         public CardInCollection(Card card, int amountNonGolden = 0, int amountGolden = 0)
         {
             Card = card;
-            CardId = card.Id;
             AmountNonGolden = amountNonGolden;
             AmountGolden = amountGolden;
             CopiesInDecks = CardsInDecks.Instance.CopiesInDecks(card.Name);
             DesiredAmount = MaxAmountInCollection;
+            CardId = card.Id;
+        }
+
+        public static bool? SettingUseDecksForDesiredCards
+        {
+            get
+            {
+                if (HearthstoneCollectionTrackerPlugin.Settings == null)
+                {
+                    return null;
+                }
+                return HearthstoneCollectionTrackerPlugin.Settings.UseDecksForDesiredCards;
+            }
         }
 
         [XmlIgnore]
@@ -63,18 +75,6 @@ namespace Hearthstone_Collection_Tracker.ViewModels
             }
         }
 
-        public static bool? SettingUseDecksForDesiredCards
-        {
-            get
-            {
-                if (HearthstoneCollectionTrackerPlugin.Settings == null)
-                {
-                    return null;
-                }
-                return HearthstoneCollectionTrackerPlugin.Settings.UseDecksForDesiredCards;
-            }
-        }
-
         public int ActualDesiredAmount
         {
             get
@@ -109,14 +109,11 @@ namespace Hearthstone_Collection_Tracker.ViewModels
 
         public int DesiredAmount
         {
-            get
-            {
-                return _desiredAmount;
-            }
+            get { return _desiredAmount; }
             set
             {
                 _desiredAmount = value;
-                OnPropertyChanged("DesiredAmount");
+                OnPropertyChanged();
             }
         }
 
