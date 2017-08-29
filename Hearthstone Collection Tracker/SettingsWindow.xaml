@@ -83,7 +83,7 @@
                   Content="Use decks for determining desired cards"
                   IsEnabled="False"
                   ToolTip="Use cards missing from your decks as your Desired Cards instead of all cards not in your collection."
-                  HorizontalAlignment="Left" Margin="10,5,0,0" VerticalAlignment="Top"/>
+                  HorizontalAlignment="Left" Margin="10,5,0,0" VerticalAlignment="Top" Checked="UpdateMainWindow" Unchecked="UpdateMainWindow"/>
         <CheckBox x:Name="checkBoxEnableAutoImport" IsChecked="{Binding Settings.EnableAutoImport, Mode=TwoWay}"
             Content="Enable Continuous Importing"
             ToolTip="Will import every 5 seconds while in the collection. It is not recommended to run this with multiple accounts/regions."

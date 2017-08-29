@@ -78,6 +78,17 @@ namespace Hearthstone_Collection_Tracker
 			}
 		}
 
+        public void Refresh()
+        {
+            SetStats.ItemsSource = null;
+            this.SetsInfo = HearthstoneCollectionTrackerPlugin.Settings.ActiveAccountSetsInfo.Select(set => new SetDetailInfoViewModel
+            {
+                SetName = set.SetName,
+                SetCards = new TrulyObservableCollection<CardInCollection>(set.Cards.ToList())
+            }).ToList();
+            SetStats.ItemsSource = this.SetsInfo;
+        }
+
         private void EditCollection(SetDetailInfoViewModel setInfo)
         {
             OpenCollectionForEditing(setInfo.SetCards);

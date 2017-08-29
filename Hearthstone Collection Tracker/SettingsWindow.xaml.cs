@@ -207,5 +207,14 @@ namespace Hearthstone_Collection_Tracker
             CheckboxUseDecksForDesiredCards.IsEnabled = false;
             CheckboxUseDecksForDesiredCards.IsChecked = false;
         }
+
+        private void UpdateMainWindow(object sender, RoutedEventArgs e)
+        {
+            if (Application.Current.Windows.OfType<MainWindow>().Any())
+            {
+                MainWindow mainWindow = Application.Current.Windows.OfType<MainWindow>().FirstOrDefault();
+                mainWindow.Refresh();
+            }
+        }
     }
 }

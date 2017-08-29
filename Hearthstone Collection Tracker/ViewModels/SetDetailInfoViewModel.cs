@@ -288,7 +288,7 @@ new Dictionary<CRarity, int>
                     var currentRarity = group.Key;
                     int maxCardsAmount = group.Sum(c => c.MaxAmountInCollection);
 
-                    int disenchantingCards = group.Sum(c => Math.Min(c.AmountGolden + c.AmountNonGolden + (c.MaxAmountInCollection - c.DesiredAmount), c.MaxAmountInCollection));
+                    int disenchantingCards = group.Sum(c => Math.Min(c.AmountGolden + c.AmountNonGolden + (c.MaxAmountInCollection - c.ActualDesiredAmount), c.MaxAmountInCollection));
                     double nonGoldenAverageValue = ((double)disenchantingCards / maxCardsAmount)
                         * CardDisenchantValue[currentRarity] * CardProbabilities[currentRarity];
                     double goldenAverageValue = ((double)disenchantingCards / maxCardsAmount)
