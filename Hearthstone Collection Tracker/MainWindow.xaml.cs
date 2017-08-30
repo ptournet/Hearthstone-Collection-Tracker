@@ -317,6 +317,7 @@ namespace Hearthstone_Collection_Tracker
 
         private void GetSetsInfo()
         {
+            CardsInDecks.Instance.UpdateCardsInDecks();
             this.SetsInfo = HearthstoneCollectionTrackerPlugin.Settings.ActiveAccountSetsInfo.Select(set => new SetDetailInfoViewModel
             {
                 SetName = set.SetName,

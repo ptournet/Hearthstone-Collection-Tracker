@@ -77,6 +77,17 @@ namespace Hearthstone_Collection_Tracker.Internal
                     }
                 }
             }
+
+            if (HearthstoneCollectionTrackerPlugin.Settings != null)
+            {
+                foreach (var set in HearthstoneCollectionTrackerPlugin.Settings.ActiveAccountSetsInfo)
+                {
+                    foreach (var card in set.Cards.Where(c => this.Cards.ContainsKey(c.Card.Name)))
+                    {
+                        card.CopiesInDecks = this.Cards[card.Card.Name];
+                    }
+                }
+            }
         }
     }
 }
