@@ -28,11 +28,18 @@ namespace Hearthstone_Collection_Tracker
             get { return new Thickness(0, TitlebarHeight, 0, 0); }
         }
 
-        public void Refresh()
+        public static void Refresh()
         {
-            SetStats.ItemsSource = null;
-            this.GetSetsInfo();
-            SetStats.ItemsSource = this.SetsInfo;
+            if (Application.Current.Windows.OfType<MainWindow>().Any())
+            {
+                MainWindow mainWindow = Application.Current.Windows.OfType<MainWindow>().FirstOrDefault();
+                if (mainWindow.SetStats != null)
+                {
+                    mainWindow.SetStats.ItemsSource = null;
+                    mainWindow.GetSetsInfo();
+                    mainWindow.SetStats.ItemsSource = mainWindow.SetsInfo;
+                }
+            }
         }
 
         public IEnumerable<SetDetailInfoViewModel> SetsInfo { get; set; }

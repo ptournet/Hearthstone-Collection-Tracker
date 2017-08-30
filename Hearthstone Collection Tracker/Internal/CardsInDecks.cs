@@ -1,4 +1,5 @@
-﻿using Hearthstone_Deck_Tracker;
+﻿using Hearthstone_Collection_Tracker.ViewModels;
+using Hearthstone_Deck_Tracker;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -82,9 +83,11 @@ namespace Hearthstone_Collection_Tracker.Internal
             {
                 foreach (var set in HearthstoneCollectionTrackerPlugin.Settings.ActiveAccountSetsInfo)
                 {
-                    foreach (var card in set.Cards.Where(c => this.Cards.ContainsKey(c.Card.Name)))
+                    foreach (CardInCollection card in set.Cards)
                     {
-                        card.CopiesInDecks = this.Cards[card.Card.Name];
+                        CardInCollection copy = card;
+                        int index = set.Cards.IndexOf(copy);
+                        set.Cards[index].CopiesInDecks = this.Cards.Where(c => c.Key == copy.Card.Name).FirstOrDefault().Value;
                     }
                 }
             }
