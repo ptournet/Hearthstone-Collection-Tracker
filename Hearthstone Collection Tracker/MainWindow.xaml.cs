@@ -117,8 +117,8 @@ namespace Hearthstone_Collection_Tracker
             CardInCollection c = card as CardInCollection;
             if (Filter.OnlyDesired)
             {
-                if ((Filter.GoldenCards && c.AmountGolden >= c.DesiredAmount)
-                    || (!Filter.GoldenCards && c.AmountNonGolden >= c.DesiredAmount))
+                if ((Filter.GoldenCards && c.AmountGolden >= c.ActualDesiredAmount)
+                    || (!Filter.GoldenCards && c.AmountNonGolden >= c.ActualDesiredAmount))
                 {
                     return false;
                 }
