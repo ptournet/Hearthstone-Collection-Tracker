@@ -31,11 +31,7 @@ namespace Hearthstone_Collection_Tracker
         public void Refresh()
         {
             SetStats.ItemsSource = null;
-            this.SetsInfo = HearthstoneCollectionTrackerPlugin.Settings.ActiveAccountSetsInfo.Select(set => new SetDetailInfoViewModel
-            {
-                SetName = set.SetName,
-                SetCards = new TrulyObservableCollection<CardInCollection>(set.Cards.ToList())
-            }).ToList();
+            this.GetSetsInfo();
             SetStats.ItemsSource = this.SetsInfo;
         }
 
@@ -45,11 +41,7 @@ namespace Hearthstone_Collection_Tracker
         {
 	        try
 	        {
-				SetsInfo = HearthstoneCollectionTrackerPlugin.Settings.ActiveAccountSetsInfo.Select(set => new SetDetailInfoViewModel
-				{
-					SetName = set.SetName,
-					SetCards = new TrulyObservableCollection<CardInCollection>(set.Cards.ToList())
-				});
+				this.GetSetsInfo();
 
 				this.MaxHeight = SystemParameters.PrimaryScreenHeight;
 				InitializeComponent();
@@ -321,6 +313,15 @@ namespace Hearthstone_Collection_Tracker
 
             MainWrapPanel.HorizontalAlignment = FlyoutCollection.IsOpen
                 ? HorizontalAlignment.Left : HorizontalAlignment.Center;
+        }
+
+        private void GetSetsInfo()
+        {
+            this.SetsInfo = HearthstoneCollectionTrackerPlugin.Settings.ActiveAccountSetsInfo.Select(set => new SetDetailInfoViewModel
+            {
+                SetName = set.SetName,
+                SetCards = new TrulyObservableCollection<CardInCollection>(set.Cards.ToList())
+            }).ToList();
         }
 
         private void ManageAllCards_Click(object sender, RoutedEventArgs e)
