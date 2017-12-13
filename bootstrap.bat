@@ -1,4 +1,7 @@
 @echo off
+REM Remove the directories if they exist
+if exist HearthMirror del HearthMirror
+if exist HearthDb del HearthDb
 git clone https://github.com/HearthSim/HearthMirror
 git clone https://github.com/HearthSim/HearthDb
 

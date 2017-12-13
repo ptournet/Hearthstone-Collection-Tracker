@@ -110,6 +110,7 @@
     <Compile Include="Internal\DataUpdaters\DataUpdaterV04.cs" />
     <Compile Include="Internal\DataUpdaters\DataUpdaterV05.cs" />
     <Compile Include="Internal\DataUpdaters\DataUpdaterV051.cs" />
+    <Compile Include="Internal\DataUpdaters\DataUpdaterV081.cs" />
     <Compile Include="Internal\DataUpdaters\DataUpdaterV080.cs" />
     <Compile Include="Internal\DataUpdaters\DataUpdaterV071.cs" />
     <Compile Include="Internal\DataUpdaters\DataUpdaterV041.cs" />
@@ -200,6 +201,8 @@
   </ItemGroup>
   <ItemGroup>
     <Resource Include="FodyWeavers.xml" />
+  </ItemGroup>
+  <ItemGroup>
     <Content Include="packages\HearthstoneDeckTracker.exe" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
