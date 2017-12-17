@@ -205,17 +205,17 @@ new Dictionary<CRarity, int>
 
             foreach(var card in cards)
             {
-                TotalDesiredAmount += card.DesiredAmount;
+                TotalDesiredAmount += card.ActualDesiredAmount;
                 TotalAmount += card.MaxAmountInCollection;
                 PlayerHas += card.AmountNonGolden;
                 PlayerHasGolden += card.AmountGolden;
-                PlayerHasDesired += Math.Min(card.AmountGolden + card.AmountNonGolden, card.DesiredAmount);
+                PlayerHasDesired += Math.Min(card.AmountGolden + card.AmountNonGolden, card.ActualDesiredAmount);
             }
             MissingDesiredAmount = TotalDesiredAmount - PlayerHasDesired;
 
             OpenGoldenOdds = CalculateOpeningOdds(cards, card => card.MaxAmountInCollection - card.AmountGolden, GoldenCardProbabilities);
             OpenNonGoldenOdds = CalculateOpeningOdds(cards, card => card.MaxAmountInCollection - card.AmountNonGolden, CardProbabilities);
-            OpenDesiredOdds = CalculateOpeningOdds(cards, card => Math.Max(0, card.DesiredAmount - (card.AmountGolden + card.AmountNonGolden)), AllCardProbabilitiesByRarity);
+            OpenDesiredOdds = CalculateOpeningOdds(cards, card => Math.Max(0, card.ActualDesiredAmount - (card.AmountGolden + card.AmountNonGolden)), AllCardProbabilitiesByRarity);
         }
 
         private const int CARDS_IN_PACK = 5;
@@ -248,14 +248,27 @@ new Dictionary<CRarity, int>
                 foreach (var group in _cards.GroupBy(c => c.Card.Rarity))
                 {
                     var currentRarity = group.Key;
-                    int maxCardsAmount = group.Sum(c => c.MaxAmountInCollection);
 
-                    int havingNonGolden = group.Sum(c => c.AmountNonGolden);
-                    double nonGoldenAverageValue = ((double)havingNonGolden / maxCardsAmount)
+                    int maxCardsAmount = 0;
+                    int havingNonGolden = 0;
+                    int havingGolden = 0;
+                    if (HearthstoneCollectionTrackerPlugin.Settings.UseDecksForDesiredCards)
+                    {
+                        maxCardsAmount = group.Sum(c => c.CopiesInDecks);
+                        havingNonGolden = group.Where(c => c.CopiesInDecks > 0).Sum(c => c.AmountNonGolden);
+                        havingGolden = group.Where(c => c.CopiesInDecks > 0).Sum(c => c.AmountGolden);
+                    }
+                    else
+                    {
+                        maxCardsAmount = group.Sum(c => c.MaxAmountInCollection);
+                        havingNonGolden = group.Sum(c => c.AmountNonGolden);
+                        havingGolden = group.Sum(c => c.AmountGolden);
+                    }
+
+                    double nonGoldenAverageValue = (maxCardsAmount > 0 ? ((double)havingNonGolden / maxCardsAmount) : 1)
                         * CardDisenchantValue[currentRarity] * CardProbabilities[currentRarity];
-
-                    int havingGolden = group.Sum(c => c.AmountGolden);
-                    double goldenAverageValue = ((double)havingGolden / maxCardsAmount)
+                    
+                    double goldenAverageValue = (maxCardsAmount > 0 ? ((double)havingGolden / maxCardsAmount) : 1)
                         * GoldenCardDisenchantValue[currentRarity] * GoldenCardProbabilities[currentRarity];
 
                     totalAvgDustValue += nonGoldenAverageValue + goldenAverageValue;
@@ -275,7 +288,7 @@ new Dictionary<CRarity, int>
                     var currentRarity = group.Key;
                     int maxCardsAmount = group.Sum(c => c.MaxAmountInCollection);
 
-                    int disenchantingCards = group.Sum(c => Math.Min(c.AmountGolden + c.AmountNonGolden + (c.MaxAmountInCollection - c.DesiredAmount), c.MaxAmountInCollection));
+                    int disenchantingCards = group.Sum(c => Math.Min(c.AmountGolden + c.AmountNonGolden + (c.MaxAmountInCollection - c.ActualDesiredAmount), c.MaxAmountInCollection));
                     double nonGoldenAverageValue = ((double)disenchantingCards / maxCardsAmount)
                         * CardDisenchantValue[currentRarity] * CardProbabilities[currentRarity];
                     double goldenAverageValue = ((double)disenchantingCards / maxCardsAmount)

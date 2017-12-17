@@ -1,4 +1,5 @@
 ﻿using Hearthstone_Deck_Tracker.Hearthstone;
+using Hearthstone_Collection_Tracker.Internal;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -18,8 +19,21 @@ namespace Hearthstone_Collection_Tracker.ViewModels
             Card = card;
             AmountNonGolden = amountNonGolden;
             AmountGolden = amountGolden;
+            CopiesInDecks = CardsInDecks.Instance.CopiesInDecks(card.Name);
             DesiredAmount = MaxAmountInCollection;
             CardId = card.Id;
+        }
+
+        public static bool? SettingUseDecksForDesiredCards
+        {
+            get
+            {
+                if (HearthstoneCollectionTrackerPlugin.Settings == null)
+                {
+                    return null;
+                }
+                return HearthstoneCollectionTrackerPlugin.Settings.UseDecksForDesiredCards;
+            }
         }
 
         [XmlIgnore]
@@ -46,6 +60,33 @@ namespace Hearthstone_Collection_Tracker.ViewModels
             {
                 _amountGolden = value;
                 OnPropertyChanged();
+            }
+        }
+
+        private int _copiesInDecks;
+
+        public int CopiesInDecks
+        {
+            get { return _copiesInDecks; }
+            set
+            {
+                _copiesInDecks = value;
+                OnPropertyChanged();
+            }
+        }
+
+        public int ActualDesiredAmount
+        {
+            get
+            {
+                if (SettingUseDecksForDesiredCards != null && (bool)SettingUseDecksForDesiredCards)
+                {
+                    return CopiesInDecks;
+                }
+                else
+                {
+                    return DesiredAmount;
+                }
             }
         }
 

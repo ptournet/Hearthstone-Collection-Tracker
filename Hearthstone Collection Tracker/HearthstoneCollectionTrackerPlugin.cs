@@ -43,6 +43,7 @@ namespace Hearthstone_Collection_Tracker
 
             Hearthstone_Deck_Tracker.API.DeckManagerEvents.OnDeckCreated.Add(HandleHearthstoneDeckUpdated);
             Hearthstone_Deck_Tracker.API.DeckManagerEvents.OnDeckUpdated.Add(HandleHearthstoneDeckUpdated);
+            Hearthstone_Deck_Tracker.API.DeckManagerEvents.OnDeckDeleted.Add(HandleHearthstoneDeckDeleted);
 
 			DispatcherTimer importTimer = new DispatcherTimer();
 			importTimer.Interval = new TimeSpan(0, 0, 0, 5);
@@ -72,7 +73,12 @@ namespace Hearthstone_Collection_Tracker
 
 	    }
 
-	    private void HandleHearthstoneDeckUpdated(Deck deck)
+        private void HandleHearthstoneDeckDeleted(IEnumerable<Deck> decks)
+        {
+            MainWindow.Refresh();
+        }
+
+        private void HandleHearthstoneDeckUpdated(Deck deck)
         {
             if (deck == null || !Settings.NotifyNewDeckMissingCards)
                 return;
@@ -104,6 +110,7 @@ namespace Hearthstone_Collection_Tracker
 
             if (missingCards.Any())
             {
+                MainWindow.Refresh();
                 StringBuilder alertSB = new StringBuilder();
                 foreach (var gr in missingCards.GroupBy(c => c.Item1.Set))
                 {
