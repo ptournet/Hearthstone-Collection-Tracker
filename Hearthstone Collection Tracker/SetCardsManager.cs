@@ -23,6 +23,7 @@ namespace Hearthstone_Collection_Tracker
                 if (setInfos != null)
                 {
                     var cards = Database.GetActualCards();
+                    CardsInDecks.Instance.UpdateCardsInDecks();
                     collection = setInfos;
                     foreach (var set in CollectableSets)
                     {
@@ -50,6 +51,7 @@ namespace Hearthstone_Collection_Tracker
                                     savedCard.Card = card;
                                     savedCard.AmountGolden = savedCard.AmountGolden.Clamp(0, savedCard.MaxAmountInCollection);
                                     savedCard.AmountNonGolden = savedCard.AmountNonGolden.Clamp(0, savedCard.MaxAmountInCollection);
+                                    savedCard.CopiesInDecks = CardsInDecks.Instance.CopiesInDecks(card.Name);
                                 }
                             }
                         }

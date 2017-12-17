@@ -7,6 +7,7 @@
         xmlns:DTcontrols="clr-namespace:Hearthstone_Deck_Tracker.Controls;assembly=HearthstoneDeckTracker"
         xmlns:hearthstoneDeckTracker="clr-namespace:Hearthstone_Deck_Tracker;assembly=HearthstoneDeckTracker"
         xmlns:internal="clr-namespace:Hearthstone_Collection_Tracker.Internal"
+        xmlns:qc="http://QuickConverter.CodePlex.com/"
         Background="{DynamicResource {x:Static SystemColors.WindowBrushKey}}"
         Icon="Internal\HSCollection.ico"
         BorderBrush="{DynamicResource AccentColorBrush}" BorderThickness="1"
@@ -19,9 +20,11 @@
                 <Border Margin="5, 5, 0, 0" BorderThickness="1" BorderBrush="{DynamicResource AccentColorBrush}">
                     <DockPanel LastChildFill="True" Height="Auto">
                         <controls:ToggleSwitch x:Name="ShowOnlyMissing" IsChecked="{Binding Path=Filter.OnlyMissing, Mode=TwoWay}"
-                                           OffLabel="Show all" OnLabel="Show only missing" DockPanel.Dock="Top" Margin="10,5,5,0" />
+                                           OffLabel="Show only missing" OnLabel="Show only missing" DockPanel.Dock="Top" Margin="10,5,5,0" />
+                        <controls:ToggleSwitch x:Name="ShowOnlyDesired" IsChecked="{Binding Path=Filter.OnlyDesired, Mode=TwoWay}"
+                                           OffLabel="Show only desired" OnLabel="Show only desired" DockPanel.Dock="Top" Margin="10,5,5,0" Visibility="Collapsed" />
                         <controls:ToggleSwitch x:Name="EditingGoldenCollection" IsChecked="{Binding Path=Filter.GoldenCards, Mode=TwoWay}"
-                                           OffLabel="Non-golden" OnLabel="Golden" DockPanel.Dock="Top" Margin="10,5,5,0" />
+                                           OffLabel="Golden" OnLabel="Golden" DockPanel.Dock="Top" Margin="10,5,5,0" />
                         <TextBox controls:TextBoxHelper.Watermark="Search..." x:Name="TextBoxCollectionFilter"
                             VerticalContentAlignment="Center" HorizontalAlignment="Stretch"
                             Margin="10,5,10,0" TextWrapping="NoWrap" VerticalAlignment="Top"
@@ -125,7 +128,7 @@
                                         <ComboBox Grid.Column="1" Width="20" SelectedItem="{Binding DesiredAmount, Mode=TwoWay}" Height="25"
                                                   ToolTip="Desired amount in collection"
                                                   ItemsSource="{Binding DesiredAmountOptions, Mode=OneTime}"
-                                                  Visibility="{Binding Path=EnableDesiredCardsFeature, Source={x:Static local:HearthstoneCollectionTrackerPlugin.Settings}, Converter={StaticResource VisibilityConverter}}">
+                                                  Visibility="{qc:MultiBinding '$P0 ## !$P1 ? Visibility.Visible : Visibility.Collapsed', P0={Binding Path=EnableDesiredCardsFeature, Source={x:Static local:HearthstoneCollectionTrackerPlugin.Settings}}, P1={Binding Path=UseDecksForDesiredCards, Source={x:Static local:HearthstoneCollectionTrackerPlugin.Settings}}}">
                                         </ComboBox>
                                     </Grid>
                                 </DataTemplate>

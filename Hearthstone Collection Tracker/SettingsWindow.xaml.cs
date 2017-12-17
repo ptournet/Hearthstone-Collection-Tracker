@@ -38,6 +38,7 @@ namespace Hearthstone_Collection_Tracker
             this.DataContext = this;
             var setsOption = SetCardsManager.CollectableSets.Select(s => new KeyValuePair<string, string>(s, s)).ToList();
             setsOption.Insert(0, new KeyValuePair<string, string>("All", null));
+            CheckboxUseDecksForDesiredCards.IsEnabled = CheckboxEnableDesiredCardsFeature.IsChecked.Value;
         }
 
         private void UpdateAccountsComboBox()
@@ -192,6 +193,24 @@ namespace Hearthstone_Collection_Tracker
 
                 UpdateAccountsComboBox();
             }
+        }
+
+        // Only enable Use Decks option if Desired Cards are enabled
+        private void CheckboxEnableDesiredCardsFeature_Checked(object sender, RoutedEventArgs e)
+        {
+            CheckboxUseDecksForDesiredCards.IsEnabled = true;
+        }
+
+        // If we uncheck Desired Cards we need to also clear the Use Decks option
+        private void CheckboxEnableDesiredCardsFeature_Unchecked(object sender, RoutedEventArgs e)
+        {
+            CheckboxUseDecksForDesiredCards.IsEnabled = false;
+            CheckboxUseDecksForDesiredCards.IsChecked = false;
+        }
+
+        private void UpdateMainWindow(object sender, RoutedEventArgs e)
+        {
+            MainWindow.Refresh();
         }
     }
 }
