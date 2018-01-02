@@ -53,7 +53,6 @@ namespace Hearthstone_Collection_Tracker
 				this.MaxHeight = SystemParameters.PrimaryScreenHeight;
 				InitializeComponent();
 
-				Filter = new FilterSettings();
 				Filter.PropertyChanged += (sender, args) =>
 				{
 					HandleFilterChange(sender, args);
@@ -95,7 +94,7 @@ namespace Hearthstone_Collection_Tracker
 
         #region Collection management
 
-        public FilterSettings Filter { get; set; }
+        public FilterSettings Filter { get; set; } = new FilterSettings();
 
         private void OpenCollectionForEditing(TrulyObservableCollection<CardInCollection> cards)
         {
