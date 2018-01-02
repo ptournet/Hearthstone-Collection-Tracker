@@ -64,10 +64,6 @@ namespace Hearthstone_Collection_Tracker
 				{
 					Title += " (" + activeAccount + ")";
 				}
-
-                // Setup Quick Converter.
-                QuickConverter.EquationTokenizer.AddNamespace(typeof(object));
-                QuickConverter.EquationTokenizer.AddNamespace(typeof(Visibility));
             }
 			catch(Exception e)
 			{
