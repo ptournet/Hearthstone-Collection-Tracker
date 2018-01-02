@@ -8,7 +8,6 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Threading;
 using System.Windows.Controls;
 using HearthMirror.Enums;
@@ -25,19 +24,18 @@ namespace Hearthstone_Collection_Tracker
 
             Settings = PluginSettings.LoadSettings(PluginDataDir);
 
-            MainMenuItem = new PluginMenuItem();
-            MainMenuItem.Header = Name;
+            MainMenuItem = new PluginMenuItem {Header = Name};
             MainMenuItem.Click += (sender, args) =>
             {
-                if (_mainWindow == null)
+                if (MainWindow == null)
                 {
                     InitializeMainWindow();
-                    Debug.Assert(_mainWindow != null, "_mainWindow != null");
-                    _mainWindow.Show();
+                    Debug.Assert(MainWindow != null, "_mainWindow != null");
+                    MainWindow.Show();
                 }
                 else
                 {
-                    _mainWindow.Activate();
+                    MainWindow.Activate();
                 }
             };
 
@@ -45,9 +43,8 @@ namespace Hearthstone_Collection_Tracker
             Hearthstone_Deck_Tracker.API.DeckManagerEvents.OnDeckUpdated.Add(HandleHearthstoneDeckUpdated);
             Hearthstone_Deck_Tracker.API.DeckManagerEvents.OnDeckDeleted.Add(HandleHearthstoneDeckDeleted);
 
-			DispatcherTimer importTimer = new DispatcherTimer();
-			importTimer.Interval = new TimeSpan(0, 0, 0, 5);
-			importTimer.Tick += ImportTimerOnTick; 
+            DispatcherTimer importTimer = new DispatcherTimer {Interval = new TimeSpan(0, 0, 0, 5)};
+            importTimer.Tick += ImportTimerOnTick; 
 			importTimer.IsEnabled = true;
 			importTimer.Start();
         }
@@ -91,11 +88,7 @@ namespace Hearthstone_Collection_Tracker
             foreach (var deckCard in deck.Cards)
             {
                 var cardSet = Settings.ActiveAccountSetsInfo.FirstOrDefault(set => set.SetName == deckCard.Set);
-                if (cardSet == null)
-                {
-                    continue;
-                }
-                var collectionCard = cardSet.Cards.FirstOrDefault(c => c.CardId == deckCard.Id);
+                var collectionCard = cardSet?.Cards.FirstOrDefault(c => c.CardId == deckCard.Id);
                 if (collectionCard == null)
                 {
                     continue;
@@ -111,19 +104,19 @@ namespace Hearthstone_Collection_Tracker
             if (missingCards.Any())
             {
                 MainWindow.Refresh();
-                StringBuilder alertSB = new StringBuilder();
+                StringBuilder alertSb = new StringBuilder();
                 foreach (var gr in missingCards.GroupBy(c => c.Item1.Set))
                 {
-                    alertSB.AppendFormat("{0} set:", gr.Key);
-                    alertSB.AppendLine();
+                    alertSb.AppendFormat("{0} set:", gr.Key);
+                    alertSb.AppendLine();
                     foreach(var card in gr)
                     {
-                        alertSB.AppendFormat("  • {0} ({1});", card.Item1.LocalizedName, card.Item2);
-                        alertSB.AppendLine();
+                        alertSb.AppendFormat("  • {0} ({1});", card.Item1.LocalizedName, card.Item2);
+                        alertSb.AppendLine();
                     }
                 }
-                alertSB.Append("You can disable this alert in Collection Tracker plugin settings.");
-                Hearthstone_Deck_Tracker.Core.MainWindow.ShowMessageAsync("Missing cards in collection", alertSB.ToString());
+                alertSb.Append("You can disable this alert in Collection Tracker plugin settings.");
+                Hearthstone_Deck_Tracker.Core.MainWindow.ShowMessageAsync("Missing cards in collection", alertSb.ToString());
             }
             deck.MissingCards = missingCards.Select(mc =>
             {
@@ -134,176 +127,92 @@ namespace Hearthstone_Collection_Tracker
 
         public void OnUnload()
         {
-            if (_mainWindow != null)
+            if (MainWindow != null)
             {
-                if (_mainWindow.IsVisible)
+                if (MainWindow.IsVisible)
                 {
-                    _mainWindow.Close();
+                    MainWindow.Close();
                 }
-                _mainWindow = null;
+                MainWindow = null;
             }
-            if (_settingsWindow != null)
+            if (SettingsWindow != null)
             {
-                if (_settingsWindow.IsVisible)
+                if (SettingsWindow.IsVisible)
                 {
-                    _settingsWindow.Close();
+                    SettingsWindow.Close();
                 }
-                _settingsWindow = null;
+                SettingsWindow = null;
             }
             Settings.SaveSettings(PluginDataDir);
         }
 
         public void OnButtonPress()
         {
-            if (_settingsWindow == null)
+            if (SettingsWindow == null)
             {
-                _settingsWindow = new SettingsWindow(Settings);
-                _settingsWindow.PluginWindow = _mainWindow;
-                _settingsWindow.Closed += (sender, args) =>
+                SettingsWindow = new SettingsWindow(Settings) {PluginWindow = MainWindow};
+                SettingsWindow.Closed += (sender, args) =>
                 {
-                    _settingsWindow = null;
+                    SettingsWindow = null;
                 };
-                _settingsWindow.Show();
+                SettingsWindow.Show();
             }
             else
             {
-                _settingsWindow.Activate();
+                SettingsWindow.Activate();
             }
         }
 
         public void OnUpdate()
         {
-            CheckForUpdates();
+            //CheckForUpdates();
         }
 
-        public string Name
-        {
-            get { return "Collection Tracker"; }
-        }
+        public string Name => "Collection Tracker";
 
-        public string Description
-        {
-            get
-            {
-                return @"Helps user to keep track on packs progess, suggesting the packs that will most probably contain missing cards. Report bugs and issues at https://github.com/HearthSim/Hearthstone-Collection-Tracker/issues";
-            }
-        }
+        public string Description => @"Helps user to keep track on packs progess, suggesting the packs that will most probably contain missing cards. Report bugs and issues at https://github.com/HearthSim/Hearthstone-Collection-Tracker/issues";
 
-        public string ButtonText
-        {
-            get { return "Settings & Import"; }
-        }
+        public string ButtonText => "Settings & Import";
 
-        public string Author
-        {
-            get { return "Vasilev Konstantin & the Community"; }
-        }
+        public string Author => "Vasilev Konstantin & the Community";
 
         public static readonly Version PluginVersion = new Version(0, 8, 1);
 
-        public Version Version//
-        {
-            get { return PluginVersion; }
-        }
+        public Version Version => PluginVersion;
 
         protected MenuItem MainMenuItem { get; set; }
 
-        protected static MainWindow _mainWindow;
+        protected static MainWindow MainWindow;
 
-        protected SettingsWindow _settingsWindow;
+        protected SettingsWindow SettingsWindow;
 
         protected void InitializeMainWindow()
         {
-            if (_mainWindow == null)
+            if (MainWindow == null)
             {
-                _mainWindow = new MainWindow();
-                _mainWindow.Width = Settings.CollectionWindowWidth;
-                _mainWindow.Height = Settings.CollectionWindowHeight;
-                _mainWindow.Filter.OnlyMissing = !Settings.DefaultShowAllCards;
-                _mainWindow.Closed += (sender, args) =>
+                MainWindow = new MainWindow
                 {
-                    Settings.CollectionWindowWidth = _mainWindow.Width;
-                    Settings.CollectionWindowHeight = _mainWindow.Height;
-                    if (_mainWindow.Filter != null)
+                    Width = Settings.CollectionWindowWidth,
+                    Height = Settings.CollectionWindowHeight,
+                    Filter = {OnlyMissing = !Settings.DefaultShowAllCards}
+                };
+                MainWindow.Closed += (sender, args) =>
+                {
+                    Settings.CollectionWindowWidth = MainWindow.Width;
+                    Settings.CollectionWindowHeight = MainWindow.Height;
+                    if (MainWindow.Filter != null)
                     {
-                        Settings.DefaultShowAllCards = !_mainWindow.Filter.OnlyMissing;
+                        Settings.DefaultShowAllCards = !MainWindow.Filter.OnlyMissing;
                     }
-                    _mainWindow = null;
+                    MainWindow = null;
                 };
             }
         }
 
-        public MenuItem MenuItem
-        {
-            get { return MainMenuItem; }
-        }
+        public MenuItem MenuItem => MainMenuItem;
 
-        internal static string PluginDataDir
-        {
-            get { return System.IO.Path.Combine(Hearthstone_Deck_Tracker.Config.Instance.DataDir, "CollectionTracker");  }
-        }
+        internal static string PluginDataDir => System.IO.Path.Combine(Hearthstone_Deck_Tracker.Config.Instance.DataDir, "CollectionTracker");
 
         public static PluginSettings Settings { get; set; }
-
-        #region Auto Update check implementation
-
-        private DateTime _lastTimeUpdateChecked = DateTime.MinValue;
-
-        private readonly TimeSpan _updateCheckInterval = TimeSpan.FromHours(1);
-
-        private bool _hasUpdates = false;
-
-        private bool _showingUpdateMessage = false;
-
-        private async Task CheckForUpdates()
-        {
-            if (!_hasUpdates)
-            {
-                if ((DateTime.Now - _lastTimeUpdateChecked) > _updateCheckInterval)
-                {
-                    _lastTimeUpdateChecked = DateTime.Now;
-                    var latestVersion = await Helpers.GetLatestVersion();
-                    _hasUpdates = latestVersion > Version;
-                }
-            }
-
-            if (_hasUpdates)
-            {
-                var gameIsRunning = Hearthstone_Deck_Tracker.API.Core.Game != null && Hearthstone_Deck_Tracker.API.Core.Game.IsRunning;
-                if (!gameIsRunning && _mainWindow != null && !_showingUpdateMessage)
-                {
-                    _showingUpdateMessage = true;
-                    const string releaseDownloadUrl = @"https://github.com/ko-vasilev/Hearthstone-Collection-Tracker/releases/latest";
-                    var settings = new MetroDialogSettings { AffirmativeButtonText = "Yes", NegativeButtonText = "Not now"};
-
-                    try
-                    {
-                        await Task.Delay(TimeSpan.FromSeconds(5));
-                        if (_mainWindow != null)
-                        {
-                            var result = await _mainWindow.ShowMessageAsync("New Update available!",
-                                "Do you want to download it?",
-                                MessageDialogStyle.AffirmativeAndNegative, settings);
-
-                            if (result == MessageDialogResult.Affirmative)
-                            {
-                                Process.Start(releaseDownloadUrl);
-                            }
-                            _hasUpdates = false;
-                            _lastTimeUpdateChecked = DateTime.Now.AddDays(1);
-                        }
-                    }
-                    catch
-                    {
-                    }
-                    finally
-                    {
-                        _showingUpdateMessage = false;
-                    }
-                }
-            }
-        }
-
-        #endregion
     }
 }
