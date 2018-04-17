@@ -51,7 +51,7 @@ namespace Hearthstone_Collection_Tracker.Internal.DataUpdaters
                 setInfos.Add(new BasicSetCollectionInfo()
                 {
                     SetName = WitchwoodSet,
-                    Cards = cards.Where(c => c.Set == WitchwoodSet).Select(c => new CardInCollection()
+                    Cards = cards.Where(c => c.CardSet == CardSet.GILNEAS).Select(c => new CardInCollection()
                     {
                         AmountGolden = 0,
                         AmountNonGolden = 0,
