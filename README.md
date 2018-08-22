@@ -1,14 +1,16 @@
-[![Build status](https://ci.appveyor.com/api/projects/status/5v6u45oo6b49ckje?svg=true)](https://ci.appveyor.com/project/judge2020/hearthstone-collection-tracker)
+
 
 
 Hearthstone-Collection-Tracker
 ========================
 
-## The community now maintains this plugin.
+## This plugin is now depreciated.
 
-This is a plugin for [Hearthstone Deck Tracker] 
+You should instead look into using [Collection Stats on HSReplay](https://hsreplay.net/collection/mine/). This plugin may not be updated past 0.8.4, however forks to keep it alive are welcome.
 
-It allows to keep track on cards you have in collection and shows which type of pack will give you the biggest probability of opening missing cards.
+Original readme:
+
+It allows to keep track of cards you have in collection and shows which type of pack will give you the biggest probability of opening missing cards.
 
 Main plugin window:
 

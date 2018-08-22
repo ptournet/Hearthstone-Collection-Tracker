@@ -170,7 +170,7 @@ namespace Hearthstone_Collection_Tracker
 
         public string Name => "Collection Tracker";
 
-        public string Description => @"Helps user to keep track on packs progess, suggesting the packs that will most probably contain missing cards. Report bugs and issues at https://github.com/HearthSim/Hearthstone-Collection-Tracker/issues";
+        public string Description => @"Depreciated - will not be updated, instead look into HSReplay collection stats at https://hsreplay.net/collection/mine/";
 
         public string ButtonText => "Settings & Import";
 
