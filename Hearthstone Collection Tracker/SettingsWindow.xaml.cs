@@ -1,12 +1,16 @@
 ﻿using Hearthstone_Collection_Tracker.Controls;
 using Hearthstone_Collection_Tracker.Internal;
 using Hearthstone_Collection_Tracker.Internal.Importing;
+using Hearthstone_Deck_Tracker;
 using MahApps.Metro.Controls;
 using MahApps.Metro.Controls.Dialogs;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
+using HearthMirror.Enums;
+using Hearthstone_Deck_Tracker.Utility.Extensions;
 
 namespace Hearthstone_Collection_Tracker
 {
@@ -34,7 +38,7 @@ namespace Hearthstone_Collection_Tracker
             this.DataContext = this;
             var setsOption = SetCardsManager.CollectableSets.Select(s => new KeyValuePair<string, string>(s, s)).ToList();
             setsOption.Insert(0, new KeyValuePair<string, string>("All", null));
-            ComboboxImportingSet.ItemsSource = setsOption;
+            CheckboxUseDecksForDesiredCards.IsEnabled = CheckboxEnableDesiredCardsFeature.IsChecked.Value;
         }
 
         private void UpdateAccountsComboBox()
@@ -119,64 +123,60 @@ namespace Hearthstone_Collection_Tracker
 
         private async void ButtonImportFromGame_Click(object sender, RoutedEventArgs e)
         {
-            const string message = "1) open My Collection in Hearthstone\n2) clear card filters\n3) do not move your mouse or type after clicking \"Import\"";
-
-            var settings = new MetroDialogSettings { AffirmativeButtonText = "Import" };
-            var result =
-                await
-                this.ShowMessageAsync("Import collection from Hearthstone", message, MessageDialogStyle.AffirmativeAndNegative, settings);
-
-            if (result != MessageDialogResult.Affirmative)
-            {
-                return;
-            }
-
-            var importObject = new HearthstoneImporter();
-            importObject.ImportStepDelay = int.Parse((ComboboxImportSpeed.SelectedItem as ComboBoxItem).Tag.ToString());
-            importObject.PasteFromClipboard = CheckboxImportPasteClipboard.IsChecked.HasValue ?
-                CheckboxImportPasteClipboard.IsChecked.Value : false;
-            importObject.NonGoldenFirst = CheckboxPrioritizeFullCollection.IsChecked.HasValue ?
-                CheckboxPrioritizeFullCollection.IsChecked.Value : false;
-
-            try
-            {
-                var selectedSetToImport = ((KeyValuePair<string, string>)ComboboxImportingSet.SelectedItem).Value;
-                var collection = await importObject.Import(selectedSetToImport);
-                // close plugin window
-                if (PluginWindow != null && PluginWindow.IsVisible)
-                {
-                    PluginWindow.Close();
-                }
-                foreach(var set in collection)
-                {
-                    var existingSet = Settings.ActiveAccountSetsInfo.FirstOrDefault(s => s.SetName == set.SetName);
-                    if (existingSet == null)
-                    {
-                        Settings.ActiveAccountSetsInfo.Add(existingSet);
-                    }
-                    else
-                    {
-                        existingSet.Cards = set.Cards;
-                    }
-                }
-                this.ShowMessageAsync("Import succeed", "Your collection is successfully imported from Hearthstone!");
-            }
-            catch (ImportingException ex)
-            {
-                this.ShowMessageAsync("Importing aborted", ex.Message);
-            }
-
-            // bring settings window to front
-            if (WindowState == WindowState.Minimized)
-            {
-                WindowState = WindowState.Normal;
-            }
-
-            Activate();
-            Topmost = true;
-            Topmost = false;
-            Focus();
+            ImportHearthMirror(true);
         }
+
+	    public async void ImportHearthMirror(bool showBoxes = false)
+	    {
+		    if(HearthMirror.Status.GetStatus().MirrorStatus != MirrorStatus.Ok)
+		    {
+			    if(showBoxes)
+					this.ShowMessageAsync("Not Ready", "Make sure HS is open and you are in the Collection.").Forget();
+				return;
+			}
+			var result = await ImportWithHearthmirror(Settings);
+		    var resultText = result == true ? "Successfully imported!" : "Unable to import :(";
+		    this.ShowMessageAsync("Import result", resultText).Forget();
+	    }
+	    public static async Task<bool> ImportWithHearthmirror(PluginSettings theSettings)
+	    {
+			var importObject = new HearthstoneImporter();
+			try
+			{
+				var selectedSetToImport = new KeyValuePair<string, string>("All", "").Value;
+				var collection = importObject.Import(selectedSetToImport);
+				foreach(var set in collection)
+				{
+					var existingSet = theSettings.ActiveAccountSetsInfo.FirstOrDefault(s => s.SetName == set.SetName);
+					if(existingSet == null)
+					{
+						theSettings.ActiveAccountSetsInfo.Add(set);
+					}
+					else
+					{
+						// keep desired amount
+						foreach(var card in set.Cards)
+						{
+							var existingCardInfo = existingSet.Cards.FirstOrDefault(c => c.CardId == card.CardId);
+							if(existingCardInfo != null)
+							{
+								card.DesiredAmount = existingCardInfo.DesiredAmount;
+							}
+						}
+						existingSet.Cards = set.Cards;
+					}
+				}
+			}
+			catch(ImportingException ex)
+			{
+				return false;
+			}
+
+
+			// save imported collection
+			HearthstoneCollectionTrackerPlugin.Settings.SaveCurrentAccount();
+		    return true;
+	    }
 
         private void ButtonEditAccount_Click(object sender, RoutedEventArgs e)
         {
@@ -193,6 +193,24 @@ namespace Hearthstone_Collection_Tracker
 
                 UpdateAccountsComboBox();
             }
+        }
+
+        // Only enable Use Decks option if Desired Cards are enabled
+        private void CheckboxEnableDesiredCardsFeature_Checked(object sender, RoutedEventArgs e)
+        {
+            CheckboxUseDecksForDesiredCards.IsEnabled = true;
+        }
+
+        // If we uncheck Desired Cards we need to also clear the Use Decks option
+        private void CheckboxEnableDesiredCardsFeature_Unchecked(object sender, RoutedEventArgs e)
+        {
+            CheckboxUseDecksForDesiredCards.IsEnabled = false;
+            CheckboxUseDecksForDesiredCards.IsChecked = false;
+        }
+
+        private void UpdateMainWindow(object sender, RoutedEventArgs e)
+        {
+            MainWindow.Refresh();
         }
     }
 }

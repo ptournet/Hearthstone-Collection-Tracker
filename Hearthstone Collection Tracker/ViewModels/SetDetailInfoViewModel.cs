@@ -7,6 +7,7 @@ using System.ComponentModel;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Windows;
+using CRarity = HearthDb.Enums.Rarity;
 
 namespace Hearthstone_Collection_Tracker.ViewModels
 {
@@ -19,7 +20,8 @@ namespace Hearthstone_Collection_Tracker.ViewModels
                 if (args.PropertyName == "SetCards")
                 {
                     List<CardStatsByRarity> cardStats = SetCards.GroupBy(c => c.Card.Rarity, c => c)
-                        .Select(gr => new CardStatsByRarity(gr.Key, gr.AsEnumerable()))
+                        .OrderBy(g => (int)g.Key)
+                        .Select(gr => new CardStatsByRarity(gr.Key.ToString(), gr.AsEnumerable()))
                         .ToList();
                     TotalSetStats = new CardStatsByRarity("Total", SetCards);
                     cardStats.Add(TotalSetStats);
@@ -30,7 +32,29 @@ namespace Hearthstone_Collection_Tracker.ViewModels
 
         #region Properties
 
-        public string SetName { get; set; }
+        public bool IsStandardSet { get; private set; }
+
+        private string _setName;
+        public string SetName
+        {
+            get
+            {
+                return _setName;
+            }
+            set
+            {
+                _setName = value;
+                IsStandardSet = SetCardsManager.StandardSets.Contains(value);
+            }
+        }
+
+        public string SetDisplayingName
+        {
+            get
+            {
+                return IsStandardSet ? SetName : SetName + " (Wild)";
+            }
+        }
 
         public static readonly DependencyProperty SetCardsProperty = DependencyProperty.Register("SetCards",
             typeof(TrulyObservableCollection<CardInCollection>), typeof(SetDetailInfoViewModel),
@@ -96,70 +120,70 @@ namespace Hearthstone_Collection_Tracker.ViewModels
     public class CardStatsByRarity
     {
         #region Static cards info
-        private static readonly ReadOnlyDictionary<string, double> CardProbabilities = new ReadOnlyDictionary<string, double>(
-            new Dictionary<string, double>
+        private static readonly ReadOnlyDictionary<CRarity, double> CardProbabilities = new ReadOnlyDictionary<CRarity, double>(
+            new Dictionary<CRarity, double>
             {
-                { "Common", 0.6997 },
-                { "Rare", 0.2140 },
-                { "Epic", 0.0429 },
-                { "Legendary", 0.0108 }
+                { CRarity.COMMON, 0.6997 },
+                { CRarity.RARE, 0.2140 },
+                { CRarity.EPIC, 0.0429 },
+                { CRarity.LEGENDARY, 0.0108 }
             });
 
-        private static readonly ReadOnlyDictionary<string, double> GoldenCardProbabilities = new ReadOnlyDictionary<string, double>(
-            new Dictionary<string, double>
+        private static readonly ReadOnlyDictionary<CRarity, double> GoldenCardProbabilities = new ReadOnlyDictionary<CRarity, double>(
+            new Dictionary<CRarity, double>
             {
-                { "Common", 0.0146 },
-                { "Rare", 0.0138 },
-                { "Epic", 0.0031 },
-                { "Legendary", 0.0011 }
+                { CRarity.COMMON, 0.0146 },
+                { CRarity.RARE, 0.0138 },
+                { CRarity.EPIC, 0.0031 },
+                { CRarity.LEGENDARY, 0.0011 }
             });
 
         /// <summary>
         /// contains info for both golden and non-golden cards
         /// </summary>
-        private static readonly ReadOnlyDictionary<string, double> AllCardProbabilitiesByRarity = new ReadOnlyDictionary<string, double>(
-            new Dictionary<string, double>
+        private static readonly ReadOnlyDictionary<CRarity, double> AllCardProbabilitiesByRarity = new ReadOnlyDictionary<CRarity, double>(
+            new Dictionary<CRarity, double>
             {
-                { "Common", 0.7143 },
-                { "Rare", 0.2278 },
-                { "Epic", 0.046 },
-                { "Legendary", 0.0119 }
+                { CRarity.COMMON, 0.7143 },
+                { CRarity.RARE, 0.2278 },
+                { CRarity.EPIC, 0.046 },
+                { CRarity.LEGENDARY, 0.0119 }
             });
 
-        private static readonly ReadOnlyDictionary<string, int> CardCraftValue = new ReadOnlyDictionary<string, int>(
-    new Dictionary<string, int>
+        private static readonly ReadOnlyDictionary<CRarity, int> CardCraftValue = new ReadOnlyDictionary<CRarity, int>(
+    new Dictionary<CRarity, int>
             {
-                { "Common", 40 },
-                { "Rare", 100 },
-                { "Epic", 400 },
-                { "Legendary", 1600 }
+                { CRarity.COMMON, 40 },
+                { CRarity.RARE, 100 },
+                { CRarity.EPIC, 400 },
+                { CRarity.LEGENDARY, 1600 }
             });
 
-        private static readonly ReadOnlyDictionary<string, int> GoldenCardCraftValue = new ReadOnlyDictionary<string, int>(
-    new Dictionary<string, int>
+        private static readonly ReadOnlyDictionary<CRarity, int> GoldenCardCraftValue = new ReadOnlyDictionary<CRarity, int>(
+    new Dictionary<CRarity, int>
             {
-                { "Common", 400 },
-                { "Rare", 800 },
-                { "Epic", 1600 },
-                { "Legendary", 3200 }
+                { CRarity.COMMON, 400 },
+                { CRarity.RARE, 800 },
+                { CRarity.EPIC, 1600 },
+                { CRarity.LEGENDARY, 3200 }
             });
 
-        private static readonly ReadOnlyDictionary<string, int> CardDisenchantValue = new ReadOnlyDictionary<string, int>(
-new Dictionary<string, int>
+        private static readonly ReadOnlyDictionary<CRarity, int> CardDisenchantValue = new ReadOnlyDictionary<CRarity, int>(
+new Dictionary<CRarity, int>
             {
-                { "Common", 5 },
-                { "Rare", 20 },
-                { "Epic", 100 },
-                { "Legendary", 400 }
+                { CRarity.COMMON, 5 },
+                { CRarity.RARE, 20 },
+                { CRarity.EPIC, 100 },
+                { CRarity.LEGENDARY, 400 }
             });
 
-        private static readonly ReadOnlyDictionary<string, int> GoldenCardDisenchantValue = new ReadOnlyDictionary<string, int>(
-    new Dictionary<string, int>
+        private static readonly ReadOnlyDictionary<CRarity, int> GoldenCardDisenchantValue = new ReadOnlyDictionary<CRarity, int>(
+    new Dictionary<CRarity, int>
             {
-                { "Common", 50 },
-                { "Rare", 100 },
-                { "Epic", 400 },
-                { "Legendary", 1600 }
+                { CRarity.COMMON, 50 },
+                { CRarity.RARE, 100 },
+                { CRarity.EPIC, 400 },
+                { CRarity.LEGENDARY, 1600 }
             });
         #endregion
 
@@ -170,6 +194,7 @@ new Dictionary<string, int>
             PlayerHas = 0;
             PlayerHasGolden = 0;
             PlayerHasDesired = 0;
+            MissingDesiredAmount = 0;
         }
 
         public CardStatsByRarity(string rarity, IEnumerable<CardInCollection> cards)
@@ -180,16 +205,17 @@ new Dictionary<string, int>
 
             foreach(var card in cards)
             {
-                TotalDesiredAmount += card.DesiredAmount;
+                TotalDesiredAmount += card.ActualDesiredAmount;
                 TotalAmount += card.MaxAmountInCollection;
                 PlayerHas += card.AmountNonGolden;
                 PlayerHasGolden += card.AmountGolden;
-                PlayerHasDesired += Math.Min(card.AmountGolden + card.AmountNonGolden, card.DesiredAmount);
+                PlayerHasDesired += Math.Min(card.AmountGolden + card.AmountNonGolden, card.ActualDesiredAmount);
             }
+            MissingDesiredAmount = TotalDesiredAmount - PlayerHasDesired;
 
             OpenGoldenOdds = CalculateOpeningOdds(cards, card => card.MaxAmountInCollection - card.AmountGolden, GoldenCardProbabilities);
             OpenNonGoldenOdds = CalculateOpeningOdds(cards, card => card.MaxAmountInCollection - card.AmountNonGolden, CardProbabilities);
-            OpenDesiredOdds = CalculateOpeningOdds(cards, card => Math.Max(0, card.DesiredAmount - (card.AmountGolden + card.AmountNonGolden)), AllCardProbabilitiesByRarity);
+            OpenDesiredOdds = CalculateOpeningOdds(cards, card => Math.Max(0, card.ActualDesiredAmount - (card.AmountGolden + card.AmountNonGolden)), AllCardProbabilitiesByRarity);
         }
 
         private const int CARDS_IN_PACK = 5;
@@ -206,6 +232,8 @@ new Dictionary<string, int>
 
         public int PlayerHasDesired { get; set; }
 
+        public int MissingDesiredAmount { get; set; }
+
         public double OpenGoldenOdds { get; set; }
 
         public double OpenNonGoldenOdds { get; set; }
@@ -219,15 +247,28 @@ new Dictionary<string, int>
                 double totalAvgDustValue = 0;
                 foreach (var group in _cards.GroupBy(c => c.Card.Rarity))
                 {
-                    string currentRarity = group.Key;
-                    int maxCardsAmount = group.Sum(c => c.MaxAmountInCollection);
+                    var currentRarity = group.Key;
 
-                    int havingNonGolden = group.Sum(c => c.AmountNonGolden);
-                    double nonGoldenAverageValue = ((double)havingNonGolden / maxCardsAmount)
+                    int maxCardsAmount = 0;
+                    int havingNonGolden = 0;
+                    int havingGolden = 0;
+                    if (HearthstoneCollectionTrackerPlugin.Settings.UseDecksForDesiredCards)
+                    {
+                        maxCardsAmount = group.Sum(c => c.CopiesInDecks);
+                        havingNonGolden = group.Where(c => c.CopiesInDecks > 0).Sum(c => c.AmountNonGolden);
+                        havingGolden = group.Where(c => c.CopiesInDecks > 0).Sum(c => c.AmountGolden);
+                    }
+                    else
+                    {
+                        maxCardsAmount = group.Sum(c => c.MaxAmountInCollection);
+                        havingNonGolden = group.Sum(c => c.AmountNonGolden);
+                        havingGolden = group.Sum(c => c.AmountGolden);
+                    }
+
+                    double nonGoldenAverageValue = (maxCardsAmount > 0 ? ((double)havingNonGolden / maxCardsAmount) : 1)
                         * CardDisenchantValue[currentRarity] * CardProbabilities[currentRarity];
-
-                    int havingGolden = group.Sum(c => c.AmountGolden);
-                    double goldenAverageValue = ((double)havingGolden / maxCardsAmount)
+                    
+                    double goldenAverageValue = (maxCardsAmount > 0 ? ((double)havingGolden / maxCardsAmount) : 1)
                         * GoldenCardDisenchantValue[currentRarity] * GoldenCardProbabilities[currentRarity];
 
                     totalAvgDustValue += nonGoldenAverageValue + goldenAverageValue;
@@ -244,10 +285,10 @@ new Dictionary<string, int>
                 double totalAvgDustValue = 0;
                 foreach(var group in _cards.GroupBy(c => c.Card.Rarity))
                 {
-                    string currentRarity = group.Key;
+                    var currentRarity = group.Key;
                     int maxCardsAmount = group.Sum(c => c.MaxAmountInCollection);
 
-                    int disenchantingCards = group.Sum(c => Math.Min(c.AmountGolden + c.AmountNonGolden + (c.MaxAmountInCollection - c.DesiredAmount), c.MaxAmountInCollection));
+                    int disenchantingCards = group.Sum(c => Math.Min(c.AmountGolden + c.AmountNonGolden + (c.MaxAmountInCollection - c.ActualDesiredAmount), c.MaxAmountInCollection));
                     double nonGoldenAverageValue = ((double)disenchantingCards / maxCardsAmount)
                         * CardDisenchantValue[currentRarity] * CardProbabilities[currentRarity];
                     double goldenAverageValue = ((double)disenchantingCards / maxCardsAmount)
@@ -278,7 +319,7 @@ new Dictionary<string, int>
 
         private IEnumerable<CardInCollection> _cards { get; set; }
 
-        private double CalculateOpeningOdds(IEnumerable<CardInCollection> cards, Func<CardInCollection, int> cardsAmount, IDictionary<string, double> probabilities)
+        private double CalculateOpeningOdds(IEnumerable<CardInCollection> cards, Func<CardInCollection, int> cardsAmount, IDictionary<CRarity, double> probabilities)
         {
             double oddsForAllRaritites = 0.0;
             foreach (var group in cards.GroupBy(c => c.Card.Rarity, c => new { card = c, amount = cardsAmount(c) }))
@@ -295,12 +336,12 @@ new Dictionary<string, int>
             return resultOdds;
         }
 
-        private double CalculateCardsCraftRequiredDust(IDictionary<string, int> cardsCraftValue, Func<CardInCollection, int> missingCardsCount)
+        private double CalculateCardsCraftRequiredDust(IDictionary<CRarity, int> cardsCraftValue, Func<CardInCollection, int> missingCardsCount)
         {
             double totalRequiredDust = 0;
             foreach (var group in _cards.GroupBy(c => c.Card.Rarity))
             {
-                string currentRarity = group.Key;
+                var currentRarity = group.Key;
                 double missingCards = group.Sum(missingCardsCount);
                 totalRequiredDust += cardsCraftValue[currentRarity] * missingCards;
             }

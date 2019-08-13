@@ -10,7 +10,13 @@ namespace Hearthstone_Collection_Tracker
 {
     internal static class SetCardsManager
     {
+<<<<<<< HEAD
         public static readonly string[] CollectableSets = { "Classic", "Curse of Naxxramas", "Goblins vs Gnomes", "Blackrock Mountain", "The Grand Tournament" };
+=======
+        public static readonly string[] CollectableSets = { "Classic", "Goblins vs Gnomes", "The Grand Tournament", "Whispers of the Old Gods", "Mean Streets of Gadgetzan", "Journey to Un'Goro", "Knights of the Frozen Throne", "Kobolds and Catacombs", "The Witchwood", "The Boomsday Project" };
+
+        public static readonly string[] StandardSets = { "Classic", "Journey to Un'Goro", "Knights of the Frozen Throne", "Kobolds and Catacombs", "The Witchwood", "The Boomsday Project" };
+>>>>>>> master
 
         public static List<BasicSetCollectionInfo> LoadSetsInfo(string collectionStoragePath)
         {
@@ -21,21 +27,47 @@ namespace Hearthstone_Collection_Tracker
                 if (setInfos != null)
                 {
                     var cards = Database.GetActualCards();
+<<<<<<< HEAD
+=======
+                    CardsInDecks.Instance.UpdateCardsInDecks();
+>>>>>>> master
                     collection = setInfos;
-                    foreach (var setCollection in collection)
+                    foreach (var set in CollectableSets)
                     {
-                        foreach (var card in setCollection.Cards)
+                        var currentSetCards = cards.Where(c => c.Set.Equals(set, StringComparison.InvariantCultureIgnoreCase));
+                        var setInfo = setInfos.FirstOrDefault(si => si.SetName.Equals(set, StringComparison.InvariantCultureIgnoreCase));
+                        if (setInfo == null)
                         {
-                            card.Card = cards.First(c => c.Id == card.CardId);
-                            card.AmountGolden = card.AmountGolden.Clamp(0, card.MaxAmountInCollection);
-                            card.AmountNonGolden = card.AmountNonGolden.Clamp(0, card.MaxAmountInCollection);
+                            collection.Add(new BasicSetCollectionInfo()
+                            {
+                                SetName = set,
+                                Cards = currentSetCards.Select(c => new CardInCollection(c)).ToList()
+                            });
+                        }
+                        else
+                        {
+                            foreach (var card in currentSetCards)
+                            {
+                                var savedCard = setInfo.Cards.FirstOrDefault(c => c.CardId == card.Id);
+                                if (savedCard == null)
+                                {
+                                    setInfo.Cards.Add(new CardInCollection(card));
+                                }
+                                else
+                                {
+                                    savedCard.Card = card;
+                                    savedCard.AmountGolden = savedCard.AmountGolden.Clamp(0, savedCard.MaxAmountInCollection);
+                                    savedCard.AmountNonGolden = savedCard.AmountNonGolden.Clamp(0, savedCard.MaxAmountInCollection);
+                                    savedCard.CopiesInDecks = CardsInDecks.Instance.CopiesInDecks(card.Name);
+                                }
+                            }
                         }
                     }
                 }
             }
             catch (Exception ex)
             {
-                throw new Exception("File with your collection information is corrupted.");
+                throw new Exception("File with your collection information is corrupted.", ex);
             }
             return collection;
         }

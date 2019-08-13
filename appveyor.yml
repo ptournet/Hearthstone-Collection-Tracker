@@ -1,0 +1,15 @@
+version: v{build}
+max_jobs: 1
+configuration: Release
+clone_depth: 50
+image: Visual Studio 2017
+before_build:
+- cmd: bootstrap.bat
+build:
+  project: Hearthstone Collection Tracker.sln
+  verbosity: minimal
+artifacts:
+- path: Hearthstone Collection Tracker\bin\Release\HearthstoneCollectionTracker.dll
+  name: Release-dll
+- path: Hearthstone Collection Tracker\bin\Debug\HearthstoneCollectionTracker.dll
+  name: Debug-dll

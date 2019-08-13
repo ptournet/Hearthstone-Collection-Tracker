@@ -6,21 +6,24 @@
         xmlns:pluginControls="clr-namespace:Hearthstone_Collection_Tracker.Controls"
         xmlns:DTcontrols="clr-namespace:Hearthstone_Deck_Tracker.Controls;assembly=HearthstoneDeckTracker"
         xmlns:hearthstoneDeckTracker="clr-namespace:Hearthstone_Deck_Tracker;assembly=HearthstoneDeckTracker"
-        Title="Collection Tracker" Background="{DynamicResource {x:Static SystemColors.WindowBrushKey}}"
+        xmlns:internal="clr-namespace:Hearthstone_Collection_Tracker.Internal"
+        Background="{DynamicResource {x:Static SystemColors.WindowBrushKey}}"
         Icon="Internal\HSCollection.ico"
         BorderBrush="{DynamicResource AccentColorBrush}" BorderThickness="1"
         DataContext="{Binding RelativeSource={RelativeSource Self}}"
-        ContentRendered="MainWindow_OnContentRendered" Closed="MainWindow_OnClosed">
+        ContentRendered="MainWindow_OnContentRendered" Closed="MainWindow_OnClosed" Name="PluginWindow">
     <controls:MetroWindow.Flyouts>
-        <controls:FlyoutsControl Margin="{Binding TitleBarMargin, RelativeSource={RelativeSource AncestorType=local:MainWindow}}">
+        <controls:FlyoutsControl Margin="{Binding TitleBarMargin, ElementName=PluginWindow}">
             <controls:Flyout x:Name="FlyoutCollection" Position="Right" Panel.ZIndex="102" Header="Collection"
                              MaxWidth="285" IsOpenChanged="FlyoutCollection_OnIsOpenChanged">
                 <Border Margin="5, 5, 0, 0" BorderThickness="1" BorderBrush="{DynamicResource AccentColorBrush}">
                     <DockPanel LastChildFill="True" Height="Auto">
                         <controls:ToggleSwitch x:Name="ShowOnlyMissing" IsChecked="{Binding Path=Filter.OnlyMissing, Mode=TwoWay}"
-                                           OffLabel="Show all" OnLabel="Show only missing" DockPanel.Dock="Top" Margin="10,5,5,0" />
+                                           OffLabel="Show only missing" OnLabel="Show only missing" DockPanel.Dock="Top" Margin="10,5,5,0" />
+                        <controls:ToggleSwitch x:Name="ShowOnlyDesired" IsChecked="{Binding Path=Filter.OnlyDesired, Mode=TwoWay}"
+                                           OffLabel="Show only desired" OnLabel="Show only desired" DockPanel.Dock="Top" Margin="10,5,5,0" Visibility="Collapsed" />
                         <controls:ToggleSwitch x:Name="EditingGoldenCollection" IsChecked="{Binding Path=Filter.GoldenCards, Mode=TwoWay}"
-                                           OffLabel="Non-golden" OnLabel="Golden" DockPanel.Dock="Top" Margin="10,5,5,0" />
+                                           OffLabel="Golden" OnLabel="Golden" DockPanel.Dock="Top" Margin="10,5,5,0" />
                         <TextBox controls:TextBoxHelper.Watermark="Search..." x:Name="TextBoxCollectionFilter"
                             VerticalContentAlignment="Center" HorizontalAlignment="Stretch"
                             Margin="10,5,10,0" TextWrapping="NoWrap" VerticalAlignment="Top"
@@ -36,6 +39,12 @@
                               VirtualizingStackPanel.VirtualizationMode="Recycling"
                               KeyDown="CardCollectionEditor_OnKeyDown" MouseLeftButtonUp="CardCollectionEditor_OnMouseLeftButtonUp"
                               MouseRightButtonUp="CardCollectionEditor_OnMouseRightButtonUp" HorizontalContentAlignment="Left">
+                            <ListView.ItemsPanel>
+                                <ItemsPanelTemplate>
+                                    <VirtualizingStackPanel>
+                                    </VirtualizingStackPanel>
+                                </ItemsPanelTemplate>
+                            </ListView.ItemsPanel>
                             <ListView.Style>
                                 <Style TargetType="ListView">
                                     <Style.Triggers>
@@ -57,7 +66,7 @@
                                     <Setter Property="Visibility" Value="Collapsed" />
                                 </Style>
                                 <Style TargetType="ListViewItem">
-                                    <Setter Property="Margin" Value="-4,-3,-3,0"/>
+                                    <Setter Property="Margin" Value="-4,-3,-3,0" />
                                     <Style.Triggers>
                                         <Trigger Property="IsSelected"
                                          Value="True">
@@ -66,12 +75,14 @@
                                         </Trigger>
                                     </Style.Triggers>
                                 </Style>
+                                <internal:InverseBooleanConverter x:Key="InverseBooleanConverter" />
+                                <internal:VisibilityConverter x:Key="VisibilityConverter" />
                             </ListView.Resources>
                             <ListView.GroupStyle>
                                 <GroupStyle>
                                     <GroupStyle.ContainerStyle>
                                         <Style TargetType="{x:Type GroupItem}">
-                                            <Setter Property="Margin" Value="0,0,0,5"/>
+                                            <Setter Property="Margin" Value="0,0,0,5" />
                                             <Setter Property="Template">
                                                 <Setter.Value>
                                                     <ControlTemplate TargetType="{x:Type GroupItem}">
@@ -91,7 +102,7 @@
                                     <Grid>
                                         <Grid.ColumnDefinitions>
                                             <ColumnDefinition Width="*"></ColumnDefinition>
-                                            <ColumnDefinition Width="Auto"></ColumnDefinition>
+                                            <ColumnDefinition Width="20"></ColumnDefinition>
                                         </Grid.ColumnDefinitions>
                                         <DTcontrols:Card DataContext="{Binding Card}" Grid.Column="0"></DTcontrols:Card>
                                         <hearthstoneDeckTracker:OutlinedTextBlock Width="28" Height="25"
@@ -105,11 +116,7 @@
                                                     <Style.Triggers>
                                                         <DataTrigger Value="True">
                                                             <DataTrigger.Binding>
-                                                                <Binding Path="Filter.GoldenCards">
-                                                                    <Binding.RelativeSource>
-                                                                        <RelativeSource Mode="FindAncestor" AncestorType="Window">
-                                                                        </RelativeSource>
-                                                                    </Binding.RelativeSource>
+                                                                <Binding Path="Filter.GoldenCards" ElementName="PluginWindow">
                                                                 </Binding>
                                                             </DataTrigger.Binding>
                                                             <Setter Property="Text" Value="{Binding AmountGolden}"></Setter>
@@ -119,8 +126,14 @@
                                             </hearthstoneDeckTracker:OutlinedTextBlock.Resources>
                                         </hearthstoneDeckTracker:OutlinedTextBlock>
                                         <ComboBox Grid.Column="1" Width="20" SelectedItem="{Binding DesiredAmount, Mode=TwoWay}" Height="25"
-                                                  ToolTip="Desired amount in collection"
-                                                  ItemsSource="{Binding DesiredAmountOptions, Mode=OneTime}">
+                                                ToolTip="Desired amount in collection"
+                                                ItemsSource="{Binding DesiredAmountOptions, Mode=OneTime}">
+                                            <ComboBox.Visibility>
+                                                <MultiBinding Converter="{StaticResource VisibilityConverter}">
+                                                    <Binding Path="EnableDesiredCardsFeature" Source="{x:Static local:HearthstoneCollectionTrackerPlugin.Settings}" />
+                                                    <Binding Path="UseDecksForDesiredCards" Source="{x:Static local:HearthstoneCollectionTrackerPlugin.Settings}" Converter="{StaticResource InverseBooleanConverter}" />
+                                                </MultiBinding>
+                                            </ComboBox.Visibility>
                                         </ComboBox>
                                     </Grid>
                                 </DataTemplate>
@@ -131,20 +144,30 @@
             </controls:Flyout>
         </controls:FlyoutsControl>
     </controls:MetroWindow.Flyouts>
-    <ScrollViewer Margin="0, 0, 2, 0">
-        <WrapPanel HorizontalAlignment="Center" Name="MainWrapPanel">
-            <ItemsControl x:Name="SetStats" Background="DarkGray" Foreground="White" HorizontalAlignment="Left" ItemsSource="{Binding SetsInfo}">
-                <ItemsControl.ItemTemplate>
-                    <DataTemplate>
-                        <pluginControls:SetSummary ManageSetClicked="EditCollection" />
-                    </DataTemplate>
-                </ItemsControl.ItemTemplate>
-                <ItemsControl.ItemsPanel>
-                    <ItemsPanelTemplate>
-                        <WrapPanel />
-                    </ItemsPanelTemplate>
-                </ItemsControl.ItemsPanel>
-            </ItemsControl>
-        </WrapPanel>
-    </ScrollViewer>    
+    <ScrollViewer Margin="0, 0, 2, 0" VerticalScrollBarVisibility="Auto">
+        <StackPanel>
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"></ColumnDefinition>
+                    <ColumnDefinition Width="*"></ColumnDefinition>
+                </Grid.ColumnDefinitions>
+                <Button Grid.Column="0" Click="ManageAllCards_Click" Margin="10, 5">Manage All Cards</Button>
+                <Button Grid.Column="1" Click="ManageStandardCards_Click" Margin="10, 5">Manage Standard Cards</Button>
+            </Grid>
+            <WrapPanel HorizontalAlignment="Center" Name="MainWrapPanel">
+                <ItemsControl x:Name="SetStats" Background="DarkGray" Foreground="White" HorizontalAlignment="Left" ItemsSource="{Binding SetsInfo}">
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate>
+                            <pluginControls:SetSummary ManageSetClicked="EditCollection" />
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                    <ItemsControl.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <WrapPanel />
+                        </ItemsPanelTemplate>
+                    </ItemsControl.ItemsPanel>
+                </ItemsControl>
+            </WrapPanel>
+        </StackPanel>
+    </ScrollViewer>
 </controls:MetroWindow>

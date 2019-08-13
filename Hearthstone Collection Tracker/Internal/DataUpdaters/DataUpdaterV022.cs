@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using HearthDb.Enums;
 
 namespace Hearthstone_Collection_Tracker.Internal.DataUpdaters
 {
@@ -71,12 +72,12 @@ namespace Hearthstone_Collection_Tracker.Internal.DataUpdaters
                 }
 
                 // remove more than 1 copy of legendary
-                var gameCards = Hearthstone_Deck_Tracker.Hearthstone.GameV2.GetActualCards();
+                var gameCards = Hearthstone_Deck_Tracker.Hearthstone.Database.GetActualCards();
                 foreach(var set in setsInfo)
                 {
                     foreach(var card in set.Cards)
                     {
-                        if (gameCards.First(c => c.Id == card.CardId).Rarity != "Legendary")
+                        if (gameCards.First(c => c.Id == card.CardId).Rarity != Rarity.LEGENDARY)
                             continue;
 
                         card.AmountGolden = Math.Min(card.AmountGolden, 1);

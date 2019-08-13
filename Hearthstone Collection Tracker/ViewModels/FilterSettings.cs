@@ -10,9 +10,26 @@ namespace Hearthstone_Collection_Tracker.ViewModels
         public FilterSettings()
         {
             OnlyMissing = true;
+            OnlyDesired = false;
             GoldenCards = false;
             Text = string.Empty;
         }
+
+        private bool _onlyDesired;
+
+        public bool OnlyDesired
+        {
+            get
+            {
+                return _onlyDesired;
+            }
+            set
+            {
+                _onlyDesired = value;
+                OnPropertyChanged();
+            }
+        }
+
 
         private bool _onlyMissing;
 
@@ -55,7 +72,7 @@ namespace Hearthstone_Collection_Tracker.ViewModels
             set
             {
                 _text = value;
-                FormattedText = value == null ? null : Helper.RemoveDiacritics(value.ToLowerInvariant(), true);
+                FormattedText = value == null ? null : Helper.RemoveDiacritics(value, true);
                 OnPropertyChanged();
             }
         }

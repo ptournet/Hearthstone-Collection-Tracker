@@ -1,10 +1,12 @@
 ﻿using Hearthstone_Collection_Tracker.Internal;
 using Hearthstone_Collection_Tracker.ViewModels;
 using Hearthstone_Deck_Tracker;
+using HearthDb.Enums;
 using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -26,40 +28,74 @@ namespace Hearthstone_Collection_Tracker
             get { return new Thickness(0, TitlebarHeight, 0, 0); }
         }
 
+        public static void Refresh()
+        {
+            if (Application.Current.Windows.OfType<MainWindow>().Any())
+            {
+                MainWindow mainWindow = Application.Current.Windows.OfType<MainWindow>().FirstOrDefault();
+                if (mainWindow.SetStats != null)
+                {
+                    mainWindow.SetStats.ItemsSource = null;
+                    mainWindow.GetSetsInfo();
+                    mainWindow.SetStats.ItemsSource = mainWindow.SetsInfo;
+                }
+            }
+        }
+
         public IEnumerable<SetDetailInfoViewModel> SetsInfo { get; set; }
 
         public MainWindow()
         {
-            SetsInfo = HearthstoneCollectionTrackerPlugin.Settings.ActiveAccountSetsInfo.Select(set => new SetDetailInfoViewModel
-            {
-                SetName = set.SetName,
-                SetCards = new TrulyObservableCollection<CardInCollection>(set.Cards.ToList())
-            });
+	        try
+	        {
+				this.GetSetsInfo();
 
-            this.MaxHeight = SystemParameters.PrimaryScreenHeight;
-            InitializeComponent();
+				this.MaxHeight = SystemParameters.PrimaryScreenHeight;
+				InitializeComponent();
 
-            Filter = new FilterSettings();
-            Filter.PropertyChanged += (sender, args) =>
-            {
-                HandleFilterChange(sender, args);
-            };
-        }
+				Filter.PropertyChanged += (sender, args) =>
+				{
+					HandleFilterChange(sender, args);
+				};
+
+				string activeAccount = HearthstoneCollectionTrackerPlugin.Settings.ActiveAccount;
+				Title = "Collection Tracker";
+				if(!string.IsNullOrEmpty(activeAccount))
+				{
+					Title += " (" + activeAccount + ")";
+				}
+            }
+			catch(Exception e)
+			{
+				var f = MessageBox.Show("Your Collection config file seems to be corrupted or out of date. \nReset it now?\n sorry for any inconvenience.", "Hearthstone Collection Tracker", MessageBoxButton.YesNo);
+				if(f == MessageBoxResult.Yes)
+				{
+					foreach(
+						var file in
+						Directory.GetFiles(HearthstoneCollectionTrackerPlugin.PluginDataDir, "Collection_*.xml",
+							SearchOption.TopDirectoryOnly))
+					{
+						File.Delete(file);
+
+					}
+					Core.MainWindow.Restart();
+				}
+			}
+		}
 
         private void EditCollection(SetDetailInfoViewModel setInfo)
         {
-            CardCollectionEditor.ItemsSource = setInfo.SetCards;
-
-            OpenCollectionFlyout();
+            OpenCollectionForEditing(setInfo.SetCards);
         }
 
         #region Collection management
 
-        public FilterSettings Filter { get; set; }
+        public FilterSettings Filter { get; set; } = new FilterSettings();
 
-        private void OpenCollectionFlyout()
+        private void OpenCollectionForEditing(TrulyObservableCollection<CardInCollection> cards)
         {
-            ListCollectionView view = (ListCollectionView)CollectionViewSource.GetDefaultView(CardCollectionEditor.ItemsSource);
+            CardCollectionEditor.ItemsSource = cards;
+            ListCollectionView view = (ListCollectionView)CollectionViewSource.GetDefaultView(cards);
             view.Filter = CardsFilter;
             if (!view.GroupDescriptions.Any())
             {
@@ -73,6 +109,14 @@ namespace Hearthstone_Collection_Tracker
         private bool CardsFilter(object card)
         {
             CardInCollection c = card as CardInCollection;
+            if (Filter.OnlyDesired)
+            {
+                if ((Filter.GoldenCards && c.AmountGolden >= c.ActualDesiredAmount)
+                    || (!Filter.GoldenCards && c.AmountNonGolden >= c.ActualDesiredAmount))
+                {
+                    return false;
+                }
+            }
             if (Filter.OnlyMissing)
             {
                 if ((Filter.GoldenCards && c.AmountGolden >= c.MaxAmountInCollection)
@@ -83,8 +127,17 @@ namespace Hearthstone_Collection_Tracker
             }
             if (Filter.FormattedText == string.Empty)
                 return true;
-            var cardName = Helper.RemoveDiacritics(c.Card.LocalizedName.ToLowerInvariant(), true);
-            return cardName.Contains(Filter.FormattedText);
+
+            Rarity rarity;
+            bool filteringByRarity = Enum.TryParse(Filter.FormattedText, true, out rarity);
+            if (filteringByRarity)
+            {
+                return c.Card.Rarity == rarity;
+            }
+
+            var cardName = Helper.RemoveDiacritics(c.Card.LocalizedName, true);
+            return cardName.Contains(Filter.FormattedText, StringComparison.OrdinalIgnoreCase)
+                || c.Card.AlternativeNames.Any(n => Helper.RemoveDiacritics(n, true).Contains(Filter.FormattedText, StringComparison.OrdinalIgnoreCase));
         }
 
         private CancellationTokenSource _filterCancel = new CancellationTokenSource();
@@ -254,11 +307,36 @@ namespace Hearthstone_Collection_Tracker
 
         private void FlyoutCollection_OnIsOpenChanged(object sender, RoutedEventArgs e)
         {
+            // Change Show Desired filter settings
+            ShowOnlyDesired.Visibility = HearthstoneCollectionTrackerPlugin.Settings.EnableDesiredCardsFeature ? Visibility.Visible : Visibility.Collapsed;
+
             if (FlyoutCollection.IsOpen)
                 TextBoxCollectionFilter.Focus();
 
             MainWrapPanel.HorizontalAlignment = FlyoutCollection.IsOpen
                 ? HorizontalAlignment.Left : HorizontalAlignment.Center;
+        }
+
+        private void GetSetsInfo()
+        {
+            CardsInDecks.Instance.UpdateCardsInDecks();
+            this.SetsInfo = HearthstoneCollectionTrackerPlugin.Settings.ActiveAccountSetsInfo.Select(set => new SetDetailInfoViewModel
+            {
+                SetName = set.SetName,
+                SetCards = new TrulyObservableCollection<CardInCollection>(set.Cards.ToList())
+            }).ToList();
+        }
+
+        private void ManageAllCards_Click(object sender, RoutedEventArgs e)
+        {
+            var collection = new TrulyObservableCollection<CardInCollection>(SetsInfo.SelectMany(si => si.SetCards).ToList());
+            OpenCollectionForEditing(collection);
+        }
+
+        private void ManageStandardCards_Click(object sender, RoutedEventArgs e)
+        {
+            var collection = new TrulyObservableCollection<CardInCollection>(SetsInfo.Where(s => s.IsStandardSet).SelectMany(si => si.SetCards).ToList());
+            OpenCollectionForEditing(collection);
         }
     }
 
@@ -284,9 +362,6 @@ namespace Hearthstone_Collection_Tracker
                 int manaCostCompare = cardX.Card.Cost.CompareTo(cardY.Card.Cost);
                 if (manaCostCompare != 0)
                     return manaCostCompare;
-                int cardTypeCompare = cardX.Card.Type.CompareTo(cardY.Card.Type);
-                if (cardTypeCompare != 0)
-                    return -cardTypeCompare;
                 return cardX.Card.LocalizedName.CompareTo(cardY.Card.LocalizedName);
             }
             else

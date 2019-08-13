@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using HearthDb.Enums;
 
 namespace Hearthstone_Collection_Tracker.Internal.DataUpdaters
 {
@@ -32,7 +33,7 @@ namespace Hearthstone_Collection_Tracker.Internal.DataUpdaters
             if (File.Exists(oldCollectionFilePath))
             {
                 List<BasicSetCollectionInfo> oldSetInfo = Hearthstone_Deck_Tracker.XmlManager<List<BasicSetCollectionInfo>>.Load(oldCollectionFilePath);
-                var cards = Hearthstone_Deck_Tracker.Hearthstone.GameV2.GetActualCards();
+                var cards = Hearthstone_Deck_Tracker.Hearthstone.Database.GetActualCards();
                 foreach (var set in oldSetInfo)
                 {
                     foreach (var card in set.Cards)
@@ -40,7 +41,7 @@ namespace Hearthstone_Collection_Tracker.Internal.DataUpdaters
                         var originalCard = cards.FirstOrDefault(c => c.Id == card.CardId);
                         if (originalCard != null)
                         {
-                            card.DesiredAmount = originalCard.Rarity == "Legendary" ? 1 : 2;
+                            card.DesiredAmount = originalCard.Rarity == Rarity.LEGENDARY ? 1 : 2;
                         }
                     }
                 }
@@ -54,7 +55,7 @@ namespace Hearthstone_Collection_Tracker.Internal.DataUpdaters
                         AmountGolden = 0,
                         AmountNonGolden = 0,
                         CardId = c.Id,
-                        DesiredAmount = c.Rarity == "Legendary" ? 1 : 2
+                        DesiredAmount = c.Rarity == Rarity.LEGENDARY ? 1 : 2
                     }).ToList()
                 });
                 Hearthstone_Deck_Tracker.XmlManager<List<BasicSetCollectionInfo>>.Save(newCollectionFilePath, oldSetInfo);

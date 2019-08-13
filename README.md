@@ -1,9 +1,16 @@
+
+
+
 Hearthstone-Collection-Tracker
 ========================
 
-This is a plugin for [Hearthstone Deck Tracker]
+## This plugin is now depreciated.
 
-It allows to keep track on cards you have in collection and shows which type of pack will give you the biggest probability of opening missing cards.
+You should instead look into using [Collection Stats on HSReplay](https://hsreplay.net/collection/mine/). This plugin may not be updated past 0.8.4, however forks to keep it alive are welcome.
+
+Original readme:
+
+It allows to keep track of cards you have in collection and shows which type of pack will give you the biggest probability of opening missing cards.
 
 Main plugin window:
 
@@ -22,7 +29,7 @@ Plugin settings window (access through HDT options -> Plugins -> Collection Trac
 
 Installation:
 =========
-Unzip HearthstoneCollectionTracker.rar archive from [release] page to Plugins folder in root of your Hearthstone Deck Tracker.
+Unzip HearthstoneCollectionTracker.zip archive from [release] page to Plugins folder in root of your Hearthstone Deck Tracker.
 Then enable it in the Settings menu.
 
 **If after copying the .dll file plugin does not appear in settings menu, go edit properties (right mouse click on dll -> Properties) and click "Unblock" button.**
@@ -31,4 +38,4 @@ Then enable it in the Settings menu.
 
 
 [Hearthstone Deck Tracker]:https://github.com/Epix37/Hearthstone-Deck-Tracker
-[release]:https://github.com/ko-vasilev/Hearthstone-Collection-Tracker/releases/latest
+[release]:https://github.com/HearthSim/Hearthstone-Collection-Tracker/releases/latest
